@@ -1,0 +1,35 @@
+id: cal-itp_lineage_01
+repo: cal-itp
+category: lineage
+difficulty: brutal
+question: |
+  What are the direct upstream dependencies of fct_scheduled_trips? List all
+  models referenced via ref() in its SQL definition.
+tool_hint: trace_dependencies
+gold:
+  required:
+    - int_gtfs_schedule__daily_scheduled_service_index
+    - dim_trips
+    - dim_routes
+    - fct_daily_schedule_feeds
+    - dim_shapes_arrays
+    - dim_gtfs_datasets
+    - int_gtfs_schedule__stop_times_grouped
+    - gtfs_optional_shapes
+  optional: []
+  forbidden:
+    - dim_stops
+    - dim_stop_times
+    - dim_schedule_feeds
+    - stg_gtfs_schedule__trips
+    - int_gtfs_schedule__all_scheduled_service
+    - dim_calendar
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  fct_scheduled_trips has 8 direct upstream dependencies spanning mart dims,
+  intermediate models, and a seed (gtfs_optional_shapes). The seed reference
+  is easy to miss. dim_gtfs_datasets comes from the transit_database domain,
+  creating a cross-domain dependency. This is one of the most complex fan-in
+  models in the project.

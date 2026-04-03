@@ -1,0 +1,42 @@
+id: cal-itp_lineage_02
+repo: cal-itp
+category: lineage
+difficulty: brutal
+question: |
+  Trace the full upstream lineage of int_gtfs_schedule__stop_times_grouped.
+  Include both direct and transitive dependencies (all ancestors).
+tool_hint: trace_dependencies
+gold:
+  required:
+    - dim_stop_times
+    - dim_stops
+    - int_gtfs_schedule__frequencies_stop_times
+    - dim_frequencies
+    - dim_schedule_feeds
+    - stg_gtfs_schedule__stop_times
+    - stg_gtfs_schedule__stops
+    - stg_gtfs_schedule__frequencies
+    - int_gtfs_schedule__joined_feed_outcomes
+    - stg_gtfs_schedule__agency
+  optional:
+    - int_gtfs_schedule__grouped_feed_file_parse_outcomes
+    - int_gtfs_schedule__keyed_parse_outcomes
+    - stg_gtfs_schedule__download_outcomes
+    - stg_gtfs_schedule__file_parse_outcomes
+    - stg_gtfs_schedule__unzip_outcomes
+  forbidden:
+    - fct_scheduled_trips
+    - fct_daily_scheduled_stops
+    - dim_routes
+    - dim_trips
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  int_gtfs_schedule__stop_times_grouped directly depends on dim_stop_times,
+  dim_stops, and int_gtfs_schedule__frequencies_stop_times. Each of those
+  in turn depends on dim_schedule_feeds (which itself depends on
+  int_gtfs_schedule__joined_feed_outcomes and stg_gtfs_schedule__agency) and
+  their respective staging models. This traces 4-5 layers deep through the
+  DAG. The dim_stops dependency is notable because it creates a cross-reference
+  within the mart layer back into intermediate.

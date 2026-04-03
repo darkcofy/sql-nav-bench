@@ -1,0 +1,36 @@
+id: cal-itp_impact_03
+repo: cal-itp
+category: impact
+difficulty: brutal
+question: |
+  If dim_routes is modified, which models are directly impacted (first-order
+  dependents only)?
+tool_hint: check_impact
+gold:
+  required:
+    - fct_scheduled_trips
+    - dim_stop_arrivals
+    - int_gtfs_schedule__stop_order_by_route
+  optional:
+    - dim_routes_latest
+    - fct_payments_rides_enghouse
+    - fct_payments_settlements_enghouse
+    - fct_payments_rides_v2
+    - idx_monthly_reports_site
+    - fct_monthly_route_id_changes
+    - int_gtfs_quality__persistent_ids_schedule
+    - int_gtfs_quality__pathways_valid
+  forbidden:
+    - dim_stops
+    - dim_stop_times
+    - dim_schedule_feeds
+    - stg_gtfs_schedule__routes
+    - int_gtfs_schedule__stop_times_grouped
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  dim_routes is referenced by models across multiple domains: GTFS schedule
+  (fct_scheduled_trips, dim_stop_arrivals), payments (fct_payments_rides_v2),
+  and quality checks. The cross-domain impact on payments models is a key
+  insight that tests understanding of the full project graph.

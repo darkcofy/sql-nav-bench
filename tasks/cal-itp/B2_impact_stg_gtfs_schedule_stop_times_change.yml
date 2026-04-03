@@ -1,0 +1,41 @@
+id: cal-itp_impact_02
+repo: cal-itp
+category: impact
+difficulty: brutal
+question: |
+  If stg_gtfs_schedule__stop_times is changed, what is the full cascade of
+  downstream models that could be affected? Include both direct and transitive
+  dependents.
+tool_hint: check_impact
+gold:
+  required:
+    - dim_stop_times
+    - int_gtfs_schedule__frequencies_stop_times
+    - int_gtfs_schedule__stop_times_grouped
+    - dim_stop_arrivals
+    - fct_scheduled_trips
+    - fct_daily_scheduled_stops
+  optional:
+    - fct_daily_feed_scheduled_service_summary
+    - fct_daily_scheduled_shapes
+    - fct_daily_schedule_rt_route_direction_summary
+    - fct_vehicle_positions_trip_metrics
+    - fct_stop_time_metrics
+    - fct_monthly_scheduled_trips
+    - fct_monthly_scheduled_stops
+    - int_gtfs_rt__vehicle_positions_trip_stop_day_map_grouping
+  forbidden:
+    - dim_schedule_feeds
+    - stg_gtfs_schedule__routes
+    - dim_routes
+    - dim_calendar
+    - dim_calendar_dates
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  stg_gtfs_schedule__stop_times feeds dim_stop_times, which then fans out to
+  int_gtfs_schedule__frequencies_stop_times, int_gtfs_schedule__stop_times_grouped,
+  and dim_stop_arrivals. These intermediate models feed fct_scheduled_trips,
+  which in turn fans out to many downstream fact tables. This tests the ability
+  to trace a deep, branching impact cascade through 4+ layers.

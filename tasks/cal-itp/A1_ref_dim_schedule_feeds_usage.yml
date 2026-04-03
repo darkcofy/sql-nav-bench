@@ -1,0 +1,54 @@
+id: cal-itp_ref_01
+repo: cal-itp
+category: reference
+difficulty: brutal
+question: |
+  Which models directly reference dim_schedule_feeds? List only SQL models
+  (not YAML schema files) that contain ref('dim_schedule_feeds').
+tool_hint: find_references
+gold:
+  required:
+    - dim_routes
+    - dim_stops
+    - dim_stop_times
+    - dim_trips
+    - dim_calendar
+    - dim_calendar_dates
+    - dim_agency
+    - fct_daily_schedule_feeds
+    - dim_frequencies
+    - dim_shapes
+    - dim_stop_areas
+    - dim_areas
+    - dim_attributions
+    - dim_fare_attributes
+    - dim_fare_leg_rules
+    - dim_fare_media
+    - dim_fare_products
+    - dim_fare_rules
+    - dim_fare_transfer_rules
+    - dim_feed_info
+    - dim_levels
+    - dim_pathways
+    - dim_transfers
+    - dim_translations
+    - fct_schedule_feed_downloads
+  optional:
+    - int_gtfs_schedule__keyed_parse_outcomes
+    - int_gtfs_quality__feed_version_history
+    - fct_daily_schedule_feed_validation_notices
+    - fct_schedule_feed_files
+    - fct_create_expiring_gtfs_issues
+    - fct_close_expired_issues
+  forbidden:
+    - fct_scheduled_trips
+    - fct_daily_scheduled_stops
+    - int_gtfs_schedule__stop_times_grouped
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  dim_schedule_feeds is a central hub model referenced by 25+ downstream models.
+  Nearly every GTFS schedule dimension model depends on it via the
+  make_schedule_file_dimension_from_dim_schedule_feeds_microbatch macro.
+  This tests ability to find references in a highly-connected graph.

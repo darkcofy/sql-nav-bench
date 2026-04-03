@@ -1,0 +1,32 @@
+id: cal-itp_ref_03
+repo: cal-itp
+category: reference
+difficulty: brutal
+question: |
+  Which models directly reference fct_scheduled_trips? List all models
+  containing ref('fct_scheduled_trips').
+tool_hint: find_references
+gold:
+  required:
+    - fct_daily_scheduled_stops
+    - fct_daily_feed_scheduled_service_summary
+    - fct_daily_scheduled_shapes
+    - fct_daily_schedule_rt_route_direction_summary
+    - fct_vehicle_positions_trip_metrics
+  optional:
+    - fct_daily_trip_updates_vehicle_positions_completeness
+    - fct_monthly_scheduled_trips
+    - int_gtfs_quality__scheduled_trips_in_tu_feed
+    - int_gtfs_rt__vehicle_positions_trip_stop_day_map_grouping
+  forbidden:
+    - dim_trips
+    - dim_routes
+    - dim_stops
+    - int_gtfs_schedule__stop_times_grouped
+    - dim_schedule_feeds
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  fct_scheduled_trips is a central fact table consumed by multiple downstream
+  aggregation and summary models across gtfs, gtfs_quality, and gtfs_rollup layers.

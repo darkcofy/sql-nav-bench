@@ -1,0 +1,36 @@
+id: cal-itp_reindex_01
+repo: cal-itp
+category: reindex
+difficulty: brutal
+question: |
+  After adding a new column 'boarding_area' to stg_gtfs_schedule__stop_times,
+  what should a reindex detect as changed? Consider that reindex works at the
+  file level, detecting which SQL source files were modified.
+tool_hint: reindex
+gold:
+  required:
+    - stg_gtfs_schedule__stop_times
+  optional:
+    - dim_stop_times
+    - int_gtfs_schedule__stop_times_grouped
+    - int_gtfs_schedule__frequencies_stop_times
+    - dim_stop_arrivals
+    - fct_scheduled_trips
+  forbidden:
+    - dim_stops
+    - dim_routes
+    - dim_trips
+    - dim_calendar
+    - dim_schedule_feeds
+    - stg_gtfs_schedule__stops
+    - stg_gtfs_schedule__routes
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  Only stg_gtfs_schedule__stop_times was directly modified. A reindex detects
+  file-level changes, so only the modified staging model is required. Downstream
+  models (dim_stop_times, int_gtfs_schedule__stop_times_grouped, etc.) may be
+  flagged as potentially affected but their SQL source files are unchanged.
+  The key test is that the reindex correctly identifies the single changed file
+  without false positives from unrelated staging models.

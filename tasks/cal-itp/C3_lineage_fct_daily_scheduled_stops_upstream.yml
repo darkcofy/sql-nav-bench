@@ -1,0 +1,28 @@
+id: cal-itp_lineage_03
+repo: cal-itp
+category: lineage
+difficulty: brutal
+question: |
+  What are the direct upstream dependencies of fct_daily_scheduled_stops?
+  List all models referenced via ref() in its SQL.
+tool_hint: trace_dependencies
+gold:
+  required:
+    - fct_scheduled_trips
+    - dim_stops
+    - dim_stop_arrivals
+  optional: []
+  forbidden:
+    - dim_routes
+    - dim_stop_times
+    - dim_schedule_feeds
+    - int_gtfs_schedule__stop_times_grouped
+    - int_gtfs_schedule__daily_scheduled_service_index
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  fct_daily_scheduled_stops references fct_scheduled_trips, dim_stops, and
+  dim_stop_arrivals. This is an incremental model that joins scheduled trips
+  with stop-level data to produce daily stop service summaries. The model
+  uses an incremental_where macro pattern common in this project.

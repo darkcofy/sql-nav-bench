@@ -1,0 +1,35 @@
+id: cal-itp_ref_02
+repo: cal-itp
+category: reference
+difficulty: brutal
+question: |
+  Which models directly reference dim_stops via ref('dim_stops')? Include
+  models from any layer (intermediate, mart, quality).
+tool_hint: find_references
+gold:
+  required:
+    - int_gtfs_schedule__stop_times_grouped
+    - fct_daily_scheduled_stops
+    - dim_stops_latest
+  optional:
+    - fct_monthly_stop_id_changes
+    - idx_monthly_reports_site
+    - fct_monthly_scheduled_stops
+    - int_gtfs_quality__wheelchair_boarding_stops
+    - int_gtfs_quality__persistent_ids_schedule
+    - int_gtfs_quality__pathways_valid
+    - int_gtfs_quality__include_tts
+    - int_gtfs_quality__complete_wheelchair_accessibility_data
+    - int_gtfs_quality__scheduled_trip_version_summary
+  forbidden:
+    - dim_routes
+    - dim_trips
+    - fct_scheduled_trips
+    - stg_gtfs_schedule__stops
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  dim_stops is referenced across GTFS mart, quality, rollup, and schedule_latest
+  layers. The required set focuses on the core GTFS chain models that directly
+  use dim_stops. The optional set includes gtfs_quality guideline check models.
