@@ -1,0 +1,42 @@
+repos:
+  jaffle-mesh:
+    type: dbt
+    sources:
+      - url: https://github.com/dbt-labs/jaffle-shop-mesh-platform
+        path: platform/
+      - url: https://github.com/dbt-labs/jaffle-shop-mesh-finance
+        path: finance/
+      - url: https://github.com/dbt-labs/jaffle-shop-mesh-marketing
+        path: marketing/
+    pin: main
+    difficulty: medium
+    description: "dbt mesh trio — cross-project deps, contracts, groups"
+
+  sqlmesh-examples:
+    type: sqlmesh
+    sources:
+      - url: https://github.com/TobikoData/sqlmesh
+        sparse_checkout: examples/
+        path: examples/
+    pin: main
+    difficulty: medium
+    description: "SQLMesh multi-project — multi-repo, hybrid dbt+sqlmesh"
+
+  mozilla-bigquery:
+    type: sql
+    sources:
+      - url: https://github.com/mozilla/bigquery-etl
+        path: .
+    pin: main
+    difficulty: brutal
+    description: "2,346 raw SQL files, BigQuery dialect, deep nesting"
+
+  cal-itp:
+    type: dbt
+    sources:
+      - url: https://github.com/cal-itp/data-infra
+        sparse_checkout: warehouse/
+        path: warehouse/
+    pin: main
+    difficulty: brutal
+    description: "630 dbt models, staging/int/mart layers, real public infra"

@@ -1,0 +1,26 @@
+name: sqlprism
+description: "SQLPrism MCP server — structural SQL tools"
+type: mcp
+config:
+  command: uv
+  args: ["run", "sqlprism", "serve"]
+tools:
+  - search
+  - find_references
+  - find_column_usage
+  - trace_dependencies
+  - trace_column_lineage
+  - get_schema
+  - get_context
+  - check_impact
+  - pr_impact
+  - find_path
+  - find_critical_models
+  - detect_cycles
+  - find_subgraphs
+  - find_bottlenecks
+  - index_status
+  - reindex
+  - reindex_files
+  - reindex_dbt
+  - reindex_sqlmesh

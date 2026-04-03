@@ -1,0 +1,8 @@
+name: baseline
+description: "Search-only baseline — grep, file read, glob"
+type: native
+tools:
+  - grep
+  - file_read
+  - glob
+  - bash
