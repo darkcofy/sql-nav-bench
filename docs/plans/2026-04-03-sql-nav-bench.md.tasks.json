@@ -1,82 +1,17 @@
 {
   "planPath": "docs/plans/2026-04-03-sql-nav-bench.md",
   "tasks": [
-    {
-      "id": 9,
-      "subject": "Task 0: Project scaffold and packaging",
-      "status": "pending",
-      "description": "**Goal:** Create uv project with pyproject.toml, directory structure, git init, repos.yml manifest.\n\n**Files:**\n- Create: pyproject.toml, repos.yml, src/sql_nav_bench/__init__.py, src/sql_nav_bench/cli.py\n- Create: LICENSE, README.md, tools/sqlprism.yml, tools/baseline.yml\n\n```json:metadata\n{\"files\": [\"pyproject.toml\", \"repos.yml\", \"src/sql_nav_bench/__init__.py\", \"src/sql_nav_bench/cli.py\", \"tools/sqlprism.yml\", \"tools/baseline.yml\"], \"verifyCommand\": \"cd /home/alfred/code/sql-nav-bench && uv sync && uv run sql-nav-bench --help\", \"acceptanceCriteria\": [\"uv sync succeeds\", \"sql-nav-bench --help works\", \"repos.yml has 4 repos\", \"git initialized\"], \"requiresUserVerification\": false}\n```"
-    },
-    {
-      "id": 10,
-      "subject": "Task 1: Pydantic models",
-      "status": "pending",
-      "blockedBy": [9],
-      "description": "**Goal:** Define Task, Gold, Result, Metrics, RepoManifest pydantic models.\n\n**Files:**\n- Create: src/sql_nav_bench/models.py, tests/test_models.py\n\n```json:metadata\n{\"files\": [\"src/sql_nav_bench/models.py\", \"tests/test_models.py\"], \"verifyCommand\": \"uv run pytest tests/test_models.py -v\", \"acceptanceCriteria\": [\"models validate correctly\", \"invalid data raises ValidationError\", \"all tests pass\"], \"requiresUserVerification\": false}\n```"
-    },
-    {
-      "id": 11,
-      "subject": "Task 2: YAML loader",
-      "status": "pending",
-      "blockedBy": [10],
-      "description": "**Goal:** Load task and result YAML files into pydantic models.\n\n**Files:**\n- Create: src/sql_nav_bench/loader.py, tests/test_loader.py, tests/fixtures/\n\n```json:metadata\n{\"files\": [\"src/sql_nav_bench/loader.py\", \"tests/test_loader.py\"], \"verifyCommand\": \"uv run pytest tests/test_loader.py -v\", \"acceptanceCriteria\": [\"loaders work correctly\", \"invalid YAML raises errors\", \"all tests pass\"], \"requiresUserVerification\": false}\n```"
-    },
-    {
-      "id": 12,
-      "subject": "Task 3: Scorer — set_match and efficiency",
-      "status": "pending",
-      "blockedBy": [10],
-      "description": "**Goal:** Implement P/R/F1 scoring and efficiency normalization.\n\n**Files:**\n- Create: src/sql_nav_bench/scorer.py, tests/test_scorer.py\n\n```json:metadata\n{\"files\": [\"src/sql_nav_bench/scorer.py\", \"tests/test_scorer.py\"], \"verifyCommand\": \"uv run pytest tests/test_scorer.py -v\", \"acceptanceCriteria\": [\"set_match scoring correct\", \"efficiency normalization works\", \"all tests pass\"], \"requiresUserVerification\": false}\n```"
-    },
-    {
-      "id": 13,
-      "subject": "Task 4: Report generator",
-      "status": "pending",
-      "blockedBy": [10],
-      "description": "**Goal:** Generate markdown comparison tables and JSON summaries.\n\n**Files:**\n- Create: src/sql_nav_bench/report.py, tests/test_report.py\n\n```json:metadata\n{\"files\": [\"src/sql_nav_bench/report.py\", \"tests/test_report.py\"], \"verifyCommand\": \"uv run pytest tests/test_report.py -v\", \"acceptanceCriteria\": [\"comparison table works\", \"JSON summary works\", \"all tests pass\"], \"requiresUserVerification\": false}\n```"
-    },
-    {
-      "id": 14,
-      "subject": "Task 5: Repo setup command",
-      "status": "pending",
-      "blockedBy": [11],
-      "description": "**Goal:** Implement sql-nav-bench setup with sparse checkout.\n\n**Files:**\n- Create: src/sql_nav_bench/setup.py, tests/test_setup.py\n- Modify: src/sql_nav_bench/cli.py\n\n```json:metadata\n{\"files\": [\"src/sql_nav_bench/setup.py\", \"tests/test_setup.py\", \"src/sql_nav_bench/cli.py\"], \"verifyCommand\": \"uv run pytest tests/test_setup.py -v\", \"acceptanceCriteria\": [\"clone commands correct\", \"sparse checkout works\", \"all tests pass\"], \"requiresUserVerification\": false}\n```"
-    },
-    {
-      "id": 15,
-      "subject": "Task 6: Wire CLI commands",
-      "status": "pending",
-      "blockedBy": [11, 12, 13],
-      "description": "**Goal:** Connect tasks, score, compare, validate CLI commands.\n\n**Files:**\n- Modify: src/sql_nav_bench/cli.py\n- Create: tests/test_cli.py\n\n```json:metadata\n{\"files\": [\"src/sql_nav_bench/cli.py\", \"tests/test_cli.py\"], \"verifyCommand\": \"uv run pytest tests/test_cli.py -v\", \"acceptanceCriteria\": [\"all CLI commands work\", \"filters work\", \"all tests pass\"], \"requiresUserVerification\": false}\n```"
-    },
-    {
-      "id": 16,
-      "subject": "Task 7: Jaffle-mesh gold set",
-      "status": "pending",
-      "blockedBy": [15],
-      "description": "**Goal:** Create 10 benchmark tasks for jaffle-mesh trio.\n\n**Files:**\n- Create: tasks/jaffle-mesh/*.yml (10 files)\n\n```json:metadata\n{\"files\": [\"tasks/jaffle-mesh/\"], \"verifyCommand\": \"uv run sql-nav-bench validate\", \"acceptanceCriteria\": [\"10 tasks created\", \"gold answers verified\", \"validate passes\"], \"requiresUserVerification\": false}\n```"
-    },
-    {
-      "id": 17,
-      "subject": "Task 8: Remaining repo task sets",
-      "status": "pending",
-      "blockedBy": [16],
-      "description": "**Goal:** Create ~10 tasks each for sqlmesh-examples, mozilla-bigquery, cal-itp.\n\n**Files:**\n- Create: tasks/sqlmesh-examples/*.yml, tasks/mozilla-bigquery/*.yml, tasks/cal-itp/*.yml\n\n```json:metadata\n{\"files\": [\"tasks/sqlmesh-examples/\", \"tasks/mozilla-bigquery/\", \"tasks/cal-itp/\"], \"verifyCommand\": \"uv run sql-nav-bench validate && uv run sql-nav-bench tasks\", \"acceptanceCriteria\": [\"~30 tasks created\", \"gold answers verified\", \"validate passes\"], \"requiresUserVerification\": false}\n```"
-    },
-    {
-      "id": 18,
-      "subject": "Task 9: End-to-end integration test",
-      "status": "pending",
-      "blockedBy": [15],
-      "description": "**Goal:** Verify full pipeline with fixture data.\n\n**Files:**\n- Create: tests/test_integration.py, tests/fixtures/results_baseline/, tests/fixtures/results_sqlprism/\n\n```json:metadata\n{\"files\": [\"tests/test_integration.py\"], \"verifyCommand\": \"uv run pytest tests/test_integration.py -v\", \"acceptanceCriteria\": [\"full pipeline works\", \"comparison correct\", \"all tests pass\"], \"requiresUserVerification\": false}\n```"
-    },
-    {
-      "id": 19,
-      "subject": "Task 10: Lint, validation, and README",
-      "status": "pending",
-      "blockedBy": [16, 17, 18],
-      "description": "**Goal:** Final code quality, README, prepare v0.1.0.\n\n**Files:**\n- Modify: README.md, pyproject.toml\n\n```json:metadata\n{\"files\": [\"README.md\", \"pyproject.toml\"], \"verifyCommand\": \"uv run ruff check . && uv run pytest tests/ -v\", \"acceptanceCriteria\": [\"lint passes\", \"all tests pass\", \"README complete\"], \"requiresUserVerification\": false}\n```"
-    }
+    {"id": 9, "subject": "Task 0: Project scaffold and packaging", "status": "completed"},
+    {"id": 10, "subject": "Task 1: Pydantic models", "status": "completed", "blockedBy": [9]},
+    {"id": 11, "subject": "Task 2: YAML loader", "status": "completed", "blockedBy": [10]},
+    {"id": 12, "subject": "Task 3: Scorer", "status": "completed", "blockedBy": [10]},
+    {"id": 13, "subject": "Task 4: Report generator", "status": "completed", "blockedBy": [10]},
+    {"id": 14, "subject": "Task 5: Repo setup command", "status": "completed", "blockedBy": [11]},
+    {"id": 15, "subject": "Task 6: Wire CLI commands", "status": "completed", "blockedBy": [11, 12, 13]},
+    {"id": 16, "subject": "Task 7: Jaffle-mesh gold set", "status": "completed", "blockedBy": [15]},
+    {"id": 17, "subject": "Task 8: Remaining repo task sets", "status": "completed", "blockedBy": [16]},
+    {"id": 18, "subject": "Task 9: Integration test", "status": "completed", "blockedBy": [15]},
+    {"id": 19, "subject": "Task 10: Lint and README", "status": "completed", "blockedBy": [16, 17, 18]}
   ],
-  "lastUpdated": "2026-04-03T12:00:00Z"
+  "lastUpdated": "2026-04-03T15:00:00Z"
 }
