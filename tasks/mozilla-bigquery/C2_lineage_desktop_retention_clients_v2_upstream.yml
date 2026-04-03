@@ -1,0 +1,31 @@
+id: mozilla-bigquery_lineage_02
+repo: mozilla-bigquery
+category: lineage
+difficulty: brutal
+question: |
+  Trace the full upstream dependency chain for
+  `moz-fx-data-shared-prod.telemetry_derived.desktop_retention_clients_v2`.
+  Include both direct and transitive dependencies (resolve views to their
+  underlying derived tables).
+tool_hint: trace_dependencies
+gold:
+  required:
+    - telemetry.desktop_active_users
+    - telemetry.clients_first_seen
+    - telemetry.clients_daily
+  optional:
+    - telemetry_derived.clients_last_seen_v2
+    - telemetry_derived.clients_daily_v6
+  forbidden:
+    - telemetry_derived.desktop_retention_clients_v2
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  desktop_retention_clients_v2 directly references:
+  - telemetry.desktop_active_users (CTE active_users)
+  - telemetry.clients_first_seen (CTE new_profiles)
+  - telemetry.clients_daily (CTE clients_data)
+  Transitively, desktop_active_users is a view over clients_last_seen_v2,
+  which depends on clients_daily_v6. The optional items capture this
+  transitive chain. This is a complex multi-CTE query with FULL OUTER JOIN.

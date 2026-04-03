@@ -1,0 +1,31 @@
+id: mozilla-bigquery_reindex_01
+repo: mozilla-bigquery
+category: reindex
+difficulty: brutal
+question: |
+  After adding a new column `sandbox_crash_count` to
+  `telemetry_derived.crashes_daily_v1/query.sql`, what should a reindex
+  detect as changed, and what downstream files might be affected?
+tool_hint: reindex
+gold:
+  required:
+    - telemetry_derived.crashes_daily_v1
+  optional:
+    - telemetry.crashes_daily
+    - telemetry_derived.clients_daily_joined_v1
+  forbidden:
+    - telemetry_derived.clients_daily_v6
+    - telemetry_derived.clients_last_seen_v2
+    - telemetry.unified_metrics
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  The reindex must detect crashes_daily_v1 as changed since its query.sql
+  was modified. The view telemetry.crashes_daily wraps crashes_daily_v1 and
+  may need updating to expose the new column, so it is optional.
+  clients_daily_joined_v1 consumes telemetry.crashes_daily and could be
+  transitively affected. The forbidden entries are unrelated tables that
+  should not appear in the reindex output. This is a raw SQL repo with
+  BigQuery dialect -- there are no dbt ref() calls, only direct table
+  references with backtick quoting.

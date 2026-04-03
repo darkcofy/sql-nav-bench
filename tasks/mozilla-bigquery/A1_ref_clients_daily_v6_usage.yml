@@ -1,0 +1,33 @@
+id: mozilla-bigquery_ref_01
+repo: mozilla-bigquery
+category: reference
+difficulty: brutal
+question: |
+  Which query files directly reference the table
+  `moz-fx-data-shared-prod.telemetry_derived.clients_daily_v6`?
+  List the derived table names (dataset.table format) that SELECT FROM it.
+tool_hint: find_references
+gold:
+  required:
+    - telemetry_derived.clients_last_seen_v2
+    - telemetry_derived.clients_first_seen_v1
+    - telemetry_derived.clients_first_seen_v2
+    - telemetry_derived.clients_first_seen_v3
+    - telemetry_derived.clients_daily_joined_v1
+    - search_derived.search_clients_daily_v8
+  optional:
+    - telemetry_derived.clients_last_seen_v1
+    - firefoxdotcom_derived.gclid_conversions_v1
+    - firefoxdotcom_derived.fbclid_desktop_conversion_events_v1
+  forbidden:
+    - telemetry_derived.clients_daily_v6
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  clients_daily_v6 is a foundational table referenced by many downstream
+  derived tables. References use backtick-quoted BigQuery fully-qualified
+  names like `moz-fx-data-shared-prod.telemetry_derived.clients_daily_v6`.
+  Some files use Jinja templating (is_init blocks) with multiple references
+  to the same table. The search_clients_daily_v8 references it for
+  profile_group_id lookups.

@@ -1,0 +1,30 @@
+id: mozilla-bigquery_impact_03
+repo: mozilla-bigquery
+category: impact
+difficulty: brutal
+question: |
+  The view `moz-fx-data-shared-prod.telemetry.unified_metrics` wraps
+  `telemetry_derived.unified_metrics_v1`. Which tables directly consume
+  the unified_metrics view?
+tool_hint: check_impact
+gold:
+  required:
+    - telemetry_derived.active_users_aggregates_v1
+    - telemetry_derived.active_users_aggregates_attribution_v1
+    - telemetry_derived.active_users_aggregates_device_v1
+  optional:
+    - telemetry_derived.sponsored_tiles_clients_daily_v1
+    - contextual_services_derived.suggest_revenue_levers_daily_v1
+    - contextual_services_derived.adm_forecasting_v1
+  forbidden:
+    - telemetry_derived.unified_metrics_v1
+    - telemetry.unified_metrics
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  telemetry.unified_metrics is consumed by multiple active_users_aggregates
+  tables that compute DAU/WAU/MAU breakdowns along different dimensions.
+  Also consumed by contextual_services and sponsored_tiles tables.
+  The underlying derived table unified_metrics_v1 is forbidden since the
+  question asks about downstream consumers of the view.

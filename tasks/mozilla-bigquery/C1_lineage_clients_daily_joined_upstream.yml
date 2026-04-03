@@ -1,0 +1,31 @@
+id: mozilla-bigquery_lineage_01
+repo: mozilla-bigquery
+category: lineage
+difficulty: brutal
+question: |
+  What are all the direct upstream tables that
+  `moz-fx-data-shared-prod.telemetry_derived.clients_daily_joined_v1`
+  reads from? List both views and derived tables.
+tool_hint: trace_dependencies
+gold:
+  required:
+    - telemetry.clients_last_seen
+    - telemetry_derived.clients_daily_event_v1
+    - telemetry.crashes_daily
+    - telemetry_derived.clients_daily_v6
+  optional: []
+  forbidden:
+    - telemetry_derived.clients_daily_joined_v1
+    - telemetry_derived.crashes_daily_v1
+    - telemetry_derived.clients_last_seen_v2
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  clients_daily_joined_v1 JOINs four sources:
+  1. telemetry_derived.clients_daily_v6 (main FROM)
+  2. telemetry.clients_last_seen (CTE first_seen, the view not the derived table)
+  3. telemetry_derived.clients_daily_event_v1 (CTE daily_events)
+  4. telemetry.crashes_daily (CTE crashes_daily, the view not the derived table)
+  The forbidden entries are tables behind the views -- the SQL references the
+  view names, not the underlying derived tables.

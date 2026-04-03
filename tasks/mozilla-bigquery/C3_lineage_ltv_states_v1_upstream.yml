@@ -1,0 +1,29 @@
+id: mozilla-bigquery_lineage_03
+repo: mozilla-bigquery
+category: lineage
+difficulty: brutal
+question: |
+  What upstream tables does
+  `moz-fx-data-shared-prod.firefox_desktop_derived.ltv_states_v1`
+  directly depend on?
+tool_hint: trace_dependencies
+gold:
+  required:
+    - search.search_clients_last_seen_v2
+    - telemetry_derived.clients_first_seen_v1
+    - firefox_desktop_derived.adclick_history_v1
+  optional: []
+  forbidden:
+    - firefox_desktop_derived.ltv_states_v1
+    - firefox_desktop_derived.client_ltv_v1
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  ltv_states_v1 JOINs three sources:
+  1. search.search_clients_last_seen_v2 (CTE base, aliased as cls)
+  2. telemetry_derived.clients_first_seen_v1 (CTE base, aliased as cfs)
+  3. firefox_desktop_derived.adclick_history_v1 (LEFT JOIN for ad_click_history)
+  The query also calls UDFs from the `moz-fx-data-shared-prod.udf` dataset.
+  Note that it references clients_first_seen_v1 (not v3), making this an
+  older dependency chain.

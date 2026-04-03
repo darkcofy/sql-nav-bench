@@ -1,0 +1,30 @@
+id: mozilla-bigquery_impact_01
+repo: mozilla-bigquery
+category: impact
+difficulty: brutal
+question: |
+  If the schema of `moz-fx-data-shared-prod.telemetry_derived.clients_last_seen_v2`
+  changes, which downstream tables and views are directly affected?
+tool_hint: check_impact
+gold:
+  required:
+    - telemetry.clients_last_seen_v2
+    - telemetry.clients_last_seen
+    - telemetry.desktop_active_users
+    - telemetry_derived.clients_last_seen_joined_v1
+  optional:
+    - telemetry_derived.desktop_engagement_clients_v1
+  forbidden:
+    - telemetry_derived.clients_last_seen_v2
+    - telemetry_derived.clients_daily_v6
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  clients_last_seen_v2 (derived table) is directly consumed by:
+  - telemetry.clients_last_seen_v2 (view that adds segment/days_since columns)
+  - telemetry.clients_last_seen (view that wraps clients_last_seen_v2 view)
+  - telemetry.desktop_active_users (view that adds is_dau/is_wau/is_mau)
+  - telemetry_derived.clients_last_seen_joined_v1 (joins with clients_last_seen_event_v1)
+  The desktop_engagement_clients_v1 references the view form (telemetry.clients_last_seen_v2),
+  not the derived table directly, so it is optional.

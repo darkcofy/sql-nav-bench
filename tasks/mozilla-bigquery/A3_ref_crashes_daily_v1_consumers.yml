@@ -1,0 +1,25 @@
+id: mozilla-bigquery_ref_03
+repo: mozilla-bigquery
+category: reference
+difficulty: brutal
+question: |
+  The table `moz-fx-data-shared-prod.telemetry_derived.crashes_daily_v1`
+  reads from which upstream table? And which view wraps crashes_daily_v1?
+tool_hint: find_references
+gold:
+  required:
+    - telemetry.crash
+    - telemetry.crashes_daily
+  optional: []
+  forbidden:
+    - telemetry_derived.crashes_daily_v1
+    - telemetry_derived.clients_daily_joined_v1
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  crashes_daily_v1 reads from `moz-fx-data-shared-prod.telemetry.crash`
+  (the raw crash ping table). The view `telemetry.crashes_daily` wraps
+  crashes_daily_v1, unpacking process_crash_counts into individual columns
+  (main_crash_count, content_crash_count, etc.) with percentile caps.
+  clients_daily_joined_v1 consumes the view, not the derived table directly.

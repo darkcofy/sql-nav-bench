@@ -1,0 +1,35 @@
+id: mozilla-bigquery_ref_02
+repo: mozilla-bigquery
+category: reference
+difficulty: brutal
+question: |
+  Which query files directly reference the view
+  `moz-fx-data-shared-prod.telemetry.desktop_active_users`?
+  List the derived table names that consume it.
+tool_hint: find_references
+gold:
+  required:
+    - telemetry_derived.desktop_retention_clients_v2
+    - telemetry_derived.desktop_engagement_clients_v1
+    - telemetry_derived.desktop_retention_clients_v1
+  optional:
+    - telemetry_derived.rolling_cohorts_v2
+    - telemetry_derived.newtab_visits_v1
+    - telemetry_derived.newtab_interactions_v1
+    - telemetry_derived.prvt_brwsng_mode_retention_v1
+    - search_derived.search_dau_aggregates_v1
+    - search_derived.search_revenue_levers_daily_v1
+    - firefox_desktop_derived.resurrection_week_2_retention_v1
+    - firefox_desktop_derived.locale_aggregates_v1
+    - firefox_desktop_derived.desktop_dau_distribution_id_history_v1
+  forbidden:
+    - telemetry.desktop_active_users
+    - telemetry_derived.clients_last_seen_v2
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  telemetry.desktop_active_users is a view over clients_last_seen_v2 that
+  adds activity_segment and is_dau/is_wau/is_mau flags. It is widely consumed
+  across telemetry_derived, search_derived, and firefox_desktop_derived datasets.
+  The view itself should be forbidden since the question asks about consumers.
