@@ -1,0 +1,29 @@
+task_id: sqlmesh-examples_lineage_02
+agent: deterministic-baseline
+tools: baseline
+timestamp: '2026-04-03T11:50:28.658493+00:00'
+answer:
+  entities:
+  - marketing
+  - current_marketing
+  - items
+  - raw_marketing
+  - orders
+  - demographics
+  - order_total
+  - order_items
+  - current_marketing_outer
+  - customers
+  explanation: Executed via baseline runner
+  confidence: high
+metrics:
+  tool_calls: 5
+  search_calls: 5
+  files_opened: 5
+  tokens_input: 0
+  tokens_output: 0
+  tokens_total: 0
+  wall_time_seconds: 0.008
+  tool_breakdown:
+    grep: 0
+    file_read: 5

@@ -128,7 +128,7 @@ class SqlprismCLIRunner(Runner):
         self._run_sqlprism([
             "reindex-sqlmesh",
             "--name", name,
-            "--project", str(project_dir),
+            "--project", str(project_dir.resolve()),
             "--db", str(self._db_path),
         ])
 

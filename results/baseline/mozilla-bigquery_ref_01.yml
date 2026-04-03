@@ -1,0 +1,42 @@
+task_id: mozilla-bigquery_ref_01
+agent: deterministic-baseline
+tools: baseline
+timestamp: '2026-04-03T11:50:11.985503+00:00'
+answer:
+  entities:
+  - event_monitoring_aggregates_v1.query
+  - checks
+  - materialized_view
+  - cross_channel_event_monitoring.view
+  - events_first_seen_v1.query
+  - new_profile_activation_clients.view
+  - engagement.view
+  - query
+  - new_profiles.view
+  - table_partition_expirations
+  - new_profile_clients.view
+  - new_profile_activations.view
+  - retention.view
+  - event_monitoring_live.view
+  - view
+  - udf
+  - script
+  - event_monitoring_live_v1.script
+  - attribution_clients.view
+  - focus_android_view
+  - macros
+  - cross_channel_events_stream.query
+  - event_monitoring_live_v1.materialized_view
+  explanation: Executed via baseline runner
+  confidence: high
+metrics:
+  tool_calls: 1
+  search_calls: 1
+  files_opened: 0
+  tokens_input: 0
+  tokens_output: 0
+  tokens_total: 0
+  wall_time_seconds: 0.068
+  tool_breakdown:
+    grep: 1
+    file_read: 0

@@ -1,0 +1,25 @@
+task_id: sqlmesh-examples_reindex_01
+agent: deterministic-baseline
+tools: baseline
+timestamp: '2026-04-03T11:50:28.675239+00:00'
+answer:
+  entities:
+  - latest_order
+  - customer_revenue_lifetime
+  - waiter_revenue_by_day
+  - waiter_as_customer_by_day
+  - top_waiters
+  - customer_revenue_by_day
+  explanation: Executed via baseline runner
+  confidence: high
+metrics:
+  tool_calls: 1
+  search_calls: 1
+  files_opened: 0
+  tokens_input: 0
+  tokens_output: 0
+  tokens_total: 0
+  wall_time_seconds: 0.003
+  tool_breakdown:
+    grep: 1
+    file_read: 0

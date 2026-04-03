@@ -1,0 +1,18 @@
+task_id: sqlmesh-examples_lineage_02
+agent: deterministic-sqlprism-cli
+tools: sqlprism-cli
+timestamp: '2026-04-03T11:55:56.260956+00:00'
+answer:
+  entities: []
+  explanation: Executed via sqlprism-cli runner
+  confidence: high
+metrics:
+  tool_calls: 1
+  search_calls: 0
+  files_opened: 0
+  tokens_input: 0
+  tokens_output: 0
+  tokens_total: 0
+  wall_time_seconds: 0.715
+  tool_breakdown:
+    query_lineage: 1
