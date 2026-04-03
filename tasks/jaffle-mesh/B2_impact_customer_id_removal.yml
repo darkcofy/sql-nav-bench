@@ -1,0 +1,27 @@
+id: jaffle-mesh_impact_02
+repo: jaffle-mesh
+category: impact
+difficulty: brutal
+question: |
+  If I remove the column customer_id from stg_orders in the platform project,
+  which downstream models would break?
+tool_hint: trace_column_lineage
+gold:
+  required:
+    - orders
+    - customers
+  optional: []
+  forbidden:
+    - order_items
+    - products
+    - supplies
+    - locations
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  finance/orders.sql uses SELECT * from stg_orders, so customer_id flows through
+  to the orders model output. marketing/customers.sql references orders and uses
+  orders.customer_id in its order_summary CTE. finance/order_items.sql also
+  references stg_orders but only uses order_id and ordered_at columns from it,
+  so removing customer_id would not break order_items.

@@ -1,0 +1,32 @@
+id: jaffle-mesh_reindex_01
+repo: jaffle-mesh
+category: reindex
+difficulty: medium
+question: |
+  After adding a new column 'discount_amount' to stg_orders in the platform
+  project, what should a reindex detect as changed?
+tool_hint: reindex
+gold:
+  required:
+    - stg_orders
+  optional:
+    - order_items
+    - orders
+  forbidden:
+    - stg_customers
+    - stg_locations
+    - stg_products
+    - stg_supplies
+    - customers
+    - locations
+    - products
+    - supplies
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  The reindex must detect stg_orders as changed since its SQL was modified.
+  Downstream models order_items and orders in finance both reference stg_orders
+  and may be flagged as potentially affected, but their SQL source files are
+  unchanged so they are optional. The reindex detects file-level changes, not
+  transitive impact.

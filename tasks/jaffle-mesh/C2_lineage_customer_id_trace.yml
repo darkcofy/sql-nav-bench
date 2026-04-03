@@ -1,0 +1,30 @@
+id: jaffle-mesh_lineage_02
+repo: jaffle-mesh
+category: lineage
+difficulty: brutal
+question: |
+  Trace the lineage of customer_id in the customers model in the marketing
+  project. What upstream models does this column originate from?
+tool_hint: trace_column_lineage
+gold:
+  required:
+    - stg_customers
+    - stg_orders
+  optional:
+    - orders
+  forbidden:
+    - stg_order_items
+    - stg_products
+    - stg_supplies
+    - stg_locations
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  In marketing/customers.sql, customer_id appears in two paths:
+  1. From the customers CTE via ref('stg_customers') which produces customer_id
+     directly from the raw_customers source.
+  2. From the order_summary CTE which uses orders.customer_id — the orders model
+     in finance gets customer_id from stg_orders via SELECT *.
+  The finance orders model is optional because it is an intermediate hop, not
+  an originating source of the column.

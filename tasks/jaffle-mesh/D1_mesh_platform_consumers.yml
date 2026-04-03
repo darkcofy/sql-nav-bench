@@ -1,0 +1,22 @@
+id: jaffle-mesh_mesh_01
+repo: jaffle-mesh
+category: mesh
+difficulty: easy
+question: |
+  What downstream projects consume models from the platform project?
+tool_hint: find_references
+gold:
+  required:
+    - finance
+    - marketing
+  optional: []
+  forbidden:
+    - platform
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  Both the finance and marketing projects declare jaffle_shop_mesh_platform
+  as a dependency in their dependencies.yml. Finance references stg_order_items,
+  stg_orders, stg_products, and stg_supplies. Marketing references stg_customers
+  (unqualified) and stg_locations (qualified).

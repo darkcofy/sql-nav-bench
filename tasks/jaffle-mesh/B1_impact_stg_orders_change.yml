@@ -1,0 +1,29 @@
+id: jaffle-mesh_impact_01
+repo: jaffle-mesh
+category: impact
+difficulty: medium
+question: |
+  If I change the stg_orders model in the platform project, what downstream
+  models across all projects are affected (directly or transitively)?
+tool_hint: check_impact
+gold:
+  required:
+    - order_items
+    - orders
+    - customers
+  optional: []
+  forbidden:
+    - stg_orders
+    - stg_customers
+    - stg_order_items
+    - locations
+    - products
+    - supplies
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  Direct dependents of stg_orders: finance/order_items, finance/orders.
+  Transitive: marketing/customers depends on both finance/orders and
+  finance/order_items. The changed model stg_orders itself is forbidden
+  since the question asks about downstream models affected.

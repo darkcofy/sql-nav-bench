@@ -1,0 +1,22 @@
+id: jaffle-mesh_mesh_03
+repo: jaffle-mesh
+category: mesh
+difficulty: medium
+question: |
+  Which models in the marketing project depend on models from the finance
+  project (not just from the platform project)?
+tool_hint: find_references
+gold:
+  required:
+    - customers
+  optional: []
+  forbidden:
+    - locations
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  marketing/customers.sql uses ref('orders') and ref('order_items'), both of
+  which resolve to models in the finance project. marketing/locations.sql only
+  references stg_locations from the platform project via a qualified ref, so
+  it has no finance dependency.

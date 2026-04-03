@@ -1,0 +1,24 @@
+id: jaffle-mesh_ref_02
+repo: jaffle-mesh
+category: reference
+difficulty: easy
+question: |
+  What models directly depend on stg_customers from the platform project?
+tool_hint: find_references
+gold:
+  required:
+    - customers
+  optional: []
+  forbidden:
+    - orders
+    - order_items
+    - locations
+    - products
+    - supplies
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  Only the marketing project's customers model directly references stg_customers,
+  via an unqualified ref('stg_customers') that resolves cross-project through
+  the marketing project's dependencies.yml.

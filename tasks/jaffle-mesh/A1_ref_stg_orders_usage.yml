@@ -1,0 +1,27 @@
+id: jaffle-mesh_ref_01
+repo: jaffle-mesh
+category: reference
+difficulty: medium
+question: |
+  Where is the stg_orders model used? List all models that directly reference stg_orders.
+tool_hint: find_references
+gold:
+  required:
+    - order_items
+    - orders
+  optional: []
+  forbidden:
+    - stg_customers
+    - stg_order_items
+    - customers
+    - locations
+    - products
+    - supplies
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  In the finance project, both order_items.sql and orders.sql reference stg_orders
+  from the platform project. order_items uses a qualified cross-project ref
+  ref('jaffle_shop_mesh_platform', 'stg_orders'), while orders uses an unqualified
+  ref('stg_orders') that resolves to the platform project via dependencies.yml.

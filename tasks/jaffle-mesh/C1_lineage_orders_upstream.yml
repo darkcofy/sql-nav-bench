@@ -1,0 +1,29 @@
+id: jaffle-mesh_lineage_01
+repo: jaffle-mesh
+category: lineage
+difficulty: medium
+question: |
+  What upstream models feed the orders model in the finance project?
+  Include both direct and transitive upstream dependencies.
+tool_hint: trace_dependencies
+gold:
+  required:
+    - stg_orders
+    - order_items
+    - stg_order_items
+    - stg_products
+    - stg_supplies
+  optional: []
+  forbidden:
+    - stg_customers
+    - stg_locations
+    - customers
+    - locations
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  finance/orders directly depends on stg_orders (platform) and order_items (finance).
+  finance/order_items in turn depends on stg_order_items, stg_orders, stg_products,
+  and stg_supplies (all from platform). stg_orders appears as both a direct and
+  transitive dependency.

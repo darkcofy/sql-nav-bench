@@ -1,0 +1,29 @@
+id: jaffle-mesh_mesh_02
+repo: jaffle-mesh
+category: mesh
+difficulty: medium
+question: |
+  If stg_order_items changes in the platform project, which models in the
+  finance and marketing projects are affected?
+tool_hint: check_impact
+gold:
+  required:
+    - order_items
+    - orders
+    - customers
+  optional: []
+  forbidden:
+    - stg_order_items
+    - stg_orders
+    - stg_customers
+    - stg_locations
+    - locations
+    - products
+    - supplies
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  Direct: finance/order_items refs stg_order_items. Transitive: finance/orders
+  refs order_items. marketing/customers refs both orders and order_items from
+  finance. products, supplies, and locations do not depend on stg_order_items.
