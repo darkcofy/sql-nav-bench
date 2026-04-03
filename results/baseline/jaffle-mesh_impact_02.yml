@@ -1,0 +1,23 @@
+task_id: jaffle-mesh_impact_02
+agent: deterministic-baseline
+tools: baseline
+timestamp: '2026-04-03T11:28:55.056336+00:00'
+answer:
+  entities:
+  - stg_customers
+  - order_items
+  - customers
+  - orders
+  explanation: Executed via baseline runner
+  confidence: high
+metrics:
+  tool_calls: 8
+  search_calls: 8
+  files_opened: 4
+  tokens_input: 0
+  tokens_output: 0
+  tokens_total: 0
+  wall_time_seconds: 0.012
+  tool_breakdown:
+    grep: 4
+    file_read: 4
