@@ -1,5 +1,7 @@
 """CLI entry point for sql-nav-bench."""
 
+from pathlib import Path
+
 import click
 
 from sql_nav_bench import __version__
@@ -15,7 +17,11 @@ def main() -> None:
 @click.option("--repo", help="Clone a specific repo only")
 def setup(repo: str | None) -> None:
     """Clone benchmark repos."""
-    click.echo("setup: not yet implemented")
+    from sql_nav_bench.setup import setup_repos
+
+    manifest_path = Path("repos.yml")
+    repos_dir = Path("repos")
+    setup_repos(manifest_path, repos_dir, repo_filter=repo)
 
 
 @main.command()
