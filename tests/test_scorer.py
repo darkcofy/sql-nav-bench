@@ -3,7 +3,7 @@
 import pytest
 
 from sql_nav_bench.models import Gold, Metrics
-from sql_nav_bench.scorer import ScoreResult, score_efficiency, score_set_match
+from sql_nav_bench.scorer import score_efficiency, score_set_match
 
 
 class TestSetMatchScoring:

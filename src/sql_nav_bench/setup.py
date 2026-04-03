@@ -57,7 +57,7 @@ def setup_repos(manifest_path: Path, repos_dir: Path, repo_filter: str | None = 
                 )
                 continue
 
-            click.echo(f"  Cloning...")
+            click.echo("  Cloning...")
             subprocess.run(cmd, shell=True, check=True)
 
         click.echo(f"  Done: {name}")
