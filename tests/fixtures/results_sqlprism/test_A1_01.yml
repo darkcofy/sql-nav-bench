@@ -1,0 +1,21 @@
+task_id: test_A1_01
+agent: claude-sonnet-4-6
+tools: sqlprism
+timestamp: "2026-04-03T10:05:00Z"
+answer:
+  entities:
+    - model_b
+    - model_c
+  explanation: "Found via find_references tool"
+  confidence: high
+metrics:
+  tool_calls: 2
+  search_calls: 0
+  files_opened: 0
+  tokens_input: 1500
+  tokens_output: 400
+  tokens_total: 1900
+  wall_time_seconds: 3.0
+  tool_breakdown:
+    find_references: 1
+    get_context: 1

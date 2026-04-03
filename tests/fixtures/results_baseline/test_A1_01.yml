@@ -1,0 +1,20 @@
+task_id: test_A1_01
+agent: claude-sonnet-4-6
+tools: baseline
+timestamp: "2026-04-03T10:00:00Z"
+answer:
+  entities:
+    - model_b
+  explanation: "Found model_b via grep but missed model_c"
+  confidence: medium
+metrics:
+  tool_calls: 15
+  search_calls: 12
+  files_opened: 8
+  tokens_input: 20000
+  tokens_output: 5000
+  tokens_total: 25000
+  wall_time_seconds: 30.0
+  tool_breakdown:
+    grep: 12
+    file_read: 3
