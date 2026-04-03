@@ -124,6 +124,74 @@ def compare(run_a: str, run_b: str) -> None:
 
 
 @main.command()
+@click.option("--runner", required=True, type=click.Choice(["sqlprism-cli", "baseline"]))
+@click.option("--repo", help="Run against specific repo only")
+def run(runner: str, repo: str | None) -> None:
+    """Run benchmark tasks with a specific runner."""
+    import yaml as yaml_lib
+
+    from sql_nav_bench.loader import load_tasks
+    from sql_nav_bench.runners import get_runner
+
+    runner_instance = get_runner(runner)
+    tasks_dir = Path("tasks")
+    repos_dir = Path("repos")
+    results_dir = Path("results") / runner_instance.name
+
+    if not tasks_dir.exists():
+        click.echo("No tasks directory found.")
+        return
+
+    results_dir.mkdir(parents=True, exist_ok=True)
+
+    all_tasks = []
+    for repo_dir in sorted(tasks_dir.iterdir()):
+        if not repo_dir.is_dir():
+            continue
+        if repo and repo_dir.name != repo:
+            continue
+        all_tasks.extend(load_tasks(repo_dir))
+
+    if not all_tasks:
+        click.echo("No tasks found.")
+        return
+
+    # Group tasks by repo for setup
+    repos_seen: set[str] = set()
+    for task in all_tasks:
+        if task.repo not in repos_seen:
+            repo_path = repos_dir / task.repo
+            if repo_path.exists():
+                click.echo(f"Setting up {runner_instance.name} for {task.repo}...")
+                try:
+                    runner_instance.setup(task.repo, repo_path)
+                except Exception as e:
+                    click.echo(f"  Setup failed: {e}")
+            repos_seen.add(task.repo)
+
+    click.echo(f"\nRunning {len(all_tasks)} tasks with {runner_instance.name}...\n")
+    click.echo(f"{'Task ID':<35} {'Entities':>8} {'Calls':>6} {'Time':>8}")
+    click.echo("-" * 57)
+
+    for task in all_tasks:
+        repo_path = repos_dir / task.repo
+        result = runner_instance.execute_task(task, repo_path)
+
+        # Save result
+        result_path = results_dir / f"{task.id}.yml"
+        with open(result_path, "w") as f:
+            yaml_lib.dump(result.model_dump(), f, default_flow_style=False, sort_keys=False)
+
+        entity_count = len(result.answer.get("entities", []))
+        click.echo(
+            f"{task.id:<35} {entity_count:>8} {result.metrics.tool_calls:>6} "
+            f"{result.metrics.wall_time_seconds:>7.2f}s"
+        )
+
+    click.echo(f"\nResults saved to {results_dir}/")
+
+
+@main.command()
 def validate() -> None:
     """Validate task and result files."""
     from pydantic import ValidationError
