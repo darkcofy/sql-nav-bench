@@ -1,0 +1,21 @@
+task_id: test_A1_01
+agent: test-agent
+tools: baseline
+timestamp: "2026-04-03T10:00:00Z"
+answer:
+  entities:
+    - model_b
+    - model_c
+  explanation: "Found via grep"
+  confidence: high
+metrics:
+  tool_calls: 5
+  search_calls: 3
+  files_opened: 2
+  tokens_input: 1000
+  tokens_output: 500
+  tokens_total: 1500
+  wall_time_seconds: 8.1
+  tool_breakdown:
+    grep: 3
+    file_read: 2

@@ -1,0 +1,17 @@
+id: test_A1_01
+repo: test-repo
+category: reference
+difficulty: easy
+question: "Where is model_a used?"
+tool_hint: find_references
+gold:
+  required:
+    - model_b
+    - model_c
+  optional: []
+  forbidden:
+    - model_d
+scoring:
+  method: set_match
+  partial_credit: true
+notes: "Test task for loader validation"
