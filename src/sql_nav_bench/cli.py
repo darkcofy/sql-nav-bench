@@ -29,7 +29,34 @@ def setup(repo: str | None) -> None:
 @click.option("--category", help="Filter by category")
 def tasks(repo: str | None, category: str | None) -> None:
     """List available benchmark tasks."""
-    click.echo("tasks: not yet implemented")
+    from sql_nav_bench.loader import load_tasks
+
+    tasks_dir = Path("tasks")
+    if not tasks_dir.exists():
+        click.echo("No tasks directory found.")
+        return
+
+    all_tasks = []
+    for repo_dir in sorted(tasks_dir.iterdir()):
+        if not repo_dir.is_dir():
+            continue
+        if repo and repo_dir.name != repo:
+            continue
+        all_tasks.extend(load_tasks(repo_dir))
+
+    if category:
+        all_tasks = [t for t in all_tasks if t.category.value == category]
+
+    if not all_tasks:
+        click.echo("No tasks found.")
+        return
+
+    click.echo(f"{'ID':<35} {'Repo':<20} {'Category':<12} {'Difficulty':<10}")
+    click.echo("-" * 77)
+    for t in all_tasks:
+        click.echo(f"{t.id:<35} {t.repo:<20} {t.category.value:<12} {t.difficulty.value:<10}")
+
+    click.echo(f"\n{len(all_tasks)} tasks total")
 
 
 @main.command()
@@ -37,7 +64,41 @@ def tasks(repo: str | None, category: str | None) -> None:
 @click.option("--repo", help="Filter by repo")
 def score(results: str, repo: str | None) -> None:
     """Score results against gold answers."""
-    click.echo("score: not yet implemented")
+    from sql_nav_bench.loader import load_results, load_tasks
+    from sql_nav_bench.scorer import score_set_match
+
+    results_list = load_results(Path(results))
+    if not results_list:
+        click.echo("No result files found.")
+        return
+
+    tasks_dir = Path("tasks")
+    task_map: dict[str, object] = {}
+    if tasks_dir.exists():
+        for repo_dir in sorted(tasks_dir.iterdir()):
+            if not repo_dir.is_dir():
+                continue
+            if repo and repo_dir.name != repo:
+                continue
+            for t in load_tasks(repo_dir):
+                task_map[t.id] = t
+
+    click.echo(f"{'Task ID':<35} {'P':>6} {'R':>6} {'F1':>6} {'Tokens':>8} {'Calls':>6}")
+    click.echo("-" * 67)
+
+    for r in results_list:
+        task = task_map.get(r.task_id)
+        entities = r.answer.get("entities", [])
+        if task:
+            sr = score_set_match(entities, task.gold)
+            click.echo(
+                f"{r.task_id:<35} {sr.precision:>6.2f} {sr.recall:>6.2f} {sr.f1:>6.2f} "
+                f"{r.metrics.tokens_total:>8} {r.metrics.tool_calls:>6}"
+            )
+        else:
+            click.echo(f"{r.task_id:<35} {'(no matching task)':>30}")
+
+    click.echo(f"\n{len(results_list)} results scored")
 
 
 @main.command()
@@ -45,10 +106,44 @@ def score(results: str, repo: str | None) -> None:
 @click.option("--b", "run_b", required=True, type=click.Path(exists=True), help="Second results directory")
 def compare(run_a: str, run_b: str) -> None:
     """Compare two benchmark runs side-by-side."""
-    click.echo("compare: not yet implemented")
+    from sql_nav_bench.loader import load_results
+    from sql_nav_bench.report import generate_comparison
+
+    results_a = load_results(Path(run_a))
+    results_b = load_results(Path(run_b))
+
+    if not results_a or not results_b:
+        click.echo("Both result directories must contain result files.")
+        return
+
+    label_a = results_a[0].tools if results_a else "run-a"
+    label_b = results_b[0].tools if results_b else "run-b"
+
+    table = generate_comparison(results_a, results_b, label_a, label_b)
+    click.echo(table)
 
 
 @main.command()
 def validate() -> None:
     """Validate task and result files."""
-    click.echo("validate: not yet implemented")
+    from pydantic import ValidationError
+
+    from sql_nav_bench.loader import load_task
+
+    tasks_dir = Path("tasks")
+    if not tasks_dir.exists():
+        click.echo("No tasks directory found. Nothing to validate.")
+        return
+
+    errors = 0
+    total = 0
+    for yml in sorted(tasks_dir.rglob("*.yml")):
+        total += 1
+        try:
+            load_task(yml)
+            click.echo(f"  OK: {yml}")
+        except (ValidationError, Exception) as e:
+            errors += 1
+            click.echo(f"  FAIL: {yml} — {e}")
+
+    click.echo(f"\n{total} files checked, {errors} errors")
