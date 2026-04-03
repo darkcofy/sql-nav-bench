@@ -1,0 +1,32 @@
+id: sqlmesh-examples_impact_02
+repo: sqlmesh-examples
+category: impact
+difficulty: brutal
+question: |
+  If I remove the 'price' column from sushi.items, which downstream models
+  in the sushi project would break?
+tool_hint: trace_column_lineage
+gold:
+  required:
+    - customer_revenue_by_day
+    - customer_revenue_lifetime
+    - waiter_revenue_by_day
+  optional:
+    - top_waiters
+  forbidden:
+    - items
+    - orders
+    - order_items
+    - customers
+    - marketing
+    - waiters
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  The price column from sushi.items is used in three SQL models:
+  customer_revenue_by_day.sql (oi.quantity * i.price), customer_revenue_lifetime.sql
+  (oi.quantity * i.price), and waiter_revenue_by_day.sql (oi.quantity * i.price).
+  top_waiters is optional as a transitive dependent (via waiter_revenue_by_day).
+  order_items.py reads from items but only uses the 'id' column for item_id
+  sampling, not price, so it would not break.

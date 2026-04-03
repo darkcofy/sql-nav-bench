@@ -1,0 +1,28 @@
+id: sqlmesh-examples_ref_02
+repo: sqlmesh-examples
+category: reference
+difficulty: easy
+question: |
+  Which models in the sushi project directly reference sushi.items?
+tool_hint: find_references
+gold:
+  required:
+    - order_items
+    - customer_revenue_by_day
+    - customer_revenue_lifetime
+    - waiter_revenue_by_day
+  optional: []
+  forbidden:
+    - items
+    - orders
+    - customers
+    - marketing
+    - top_waiters
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  sushi.items is referenced by: order_items.py (ITEMS = "sushi.items" used in
+  context.resolve_table), customer_revenue_by_day.sql (LEFT JOIN sushi.items),
+  customer_revenue_lifetime.sql (LEFT JOIN sushi.items), and
+  waiter_revenue_by_day.sql (LEFT JOIN sushi.items).

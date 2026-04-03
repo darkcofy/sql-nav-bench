@@ -1,0 +1,29 @@
+id: sqlmesh-examples_lineage_02
+repo: sqlmesh-examples
+category: lineage
+difficulty: brutal
+question: |
+  Trace the lineage of the 'revenue' column in sushi.customer_revenue_by_day.
+  Which upstream models contribute to this column's value?
+tool_hint: trace_column_lineage
+gold:
+  required:
+    - order_items
+    - items
+    - orders
+  optional: []
+  forbidden:
+    - customers
+    - marketing
+    - raw_marketing
+    - waiters
+    - waiter_names
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  In customer_revenue_by_day.sql, revenue is computed as SUM(ot.total) where
+  ot.total = SUM(oi.quantity * i.price). oi comes from sushi.order_items
+  (quantity column), i comes from sushi.items (price column). The outer
+  query also joins sushi.orders to get customer_id and correlate order_id.
+  All three models contribute to the revenue calculation.

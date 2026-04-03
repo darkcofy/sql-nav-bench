@@ -1,0 +1,31 @@
+id: sqlmesh-examples_lineage_01
+repo: sqlmesh-examples
+category: lineage
+difficulty: medium
+question: |
+  What are all the upstream models that sushi.top_waiters depends on,
+  directly or transitively?
+tool_hint: trace_dependencies
+gold:
+  required:
+    - waiter_revenue_by_day
+    - orders
+    - order_items
+    - items
+  optional: []
+  forbidden:
+    - customers
+    - marketing
+    - raw_marketing
+    - waiters
+    - waiter_names
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  top_waiters.sql reads directly from sushi.waiter_revenue_by_day.
+  waiter_revenue_by_day.sql joins sushi.orders, sushi.order_items, and
+  sushi.items. orders and items are Python source models with no upstream
+  SQL deps. order_items depends on orders and items (already included).
+  The full upstream chain is: waiter_revenue_by_day -> orders, order_items,
+  items; order_items -> orders, items.

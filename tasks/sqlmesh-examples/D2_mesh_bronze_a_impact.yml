@@ -1,0 +1,26 @@
+id: sqlmesh-examples_mesh_02
+repo: sqlmesh-examples
+category: mesh
+difficulty: medium
+question: |
+  In the multi/ sub-project, if bronze.a in repo_1 is changed, what models
+  across both repos are affected directly or transitively?
+tool_hint: check_impact
+gold:
+  required:
+    - bronze.b
+    - silver.c
+    - silver.e
+  optional:
+    - silver.d
+  forbidden:
+    - bronze.a
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  Direct dependents of bronze.a: bronze.b (repo_1, SELECT * FROM bronze.a),
+  silver.c (repo_2, SELECT DISTINCT col_a FROM bronze.a), and silver.e
+  (repo_2, SELECT * EXCEPT(dup) FROM bronze.a). silver.d is a transitive
+  dependent via silver.c (SELECT * FROM silver.c) and is optional because
+  transitive cross-repo impact detection may vary.

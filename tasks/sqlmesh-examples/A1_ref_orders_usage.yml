@@ -1,0 +1,36 @@
+id: sqlmesh-examples_ref_01
+repo: sqlmesh-examples
+category: reference
+difficulty: medium
+question: |
+  Which models in the sushi project directly reference sushi.orders?
+  List all models that read from the orders table.
+tool_hint: find_references
+gold:
+  required:
+    - customer_revenue_by_day
+    - customer_revenue_lifetime
+    - customers
+    - waiters
+    - waiter_revenue_by_day
+    - order_items
+    - latest_order
+  optional: []
+  forbidden:
+    - orders
+    - items
+    - raw_marketing
+    - waiter_names
+    - marketing
+    - top_waiters
+    - active_customers
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  sushi.orders is referenced by: customer_revenue_by_day.sql (FROM sushi.orders),
+  customer_revenue_lifetime.sql (FROM sushi.orders), customers.sql (FROM sushi.orders),
+  waiters.py (FROM sushi.orders), waiter_revenue_by_day.sql (FROM sushi.orders),
+  order_items.py (context.resolve_table("sushi.orders")), and latest_order.sql
+  (FROM sushi.orders). The orders model itself is forbidden as it is the target,
+  not a consumer.

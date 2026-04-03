@@ -1,0 +1,39 @@
+id: sqlmesh-examples_impact_01
+repo: sqlmesh-examples
+category: impact
+difficulty: medium
+question: |
+  If the sushi.orders model is changed, what downstream models in the sushi
+  project are affected directly or transitively?
+tool_hint: check_impact
+gold:
+  required:
+    - order_items
+    - customers
+    - waiters
+    - customer_revenue_by_day
+    - customer_revenue_lifetime
+    - waiter_revenue_by_day
+    - latest_order
+  optional:
+    - top_waiters
+    - active_customers
+    - waiter_as_customer_by_day
+    - count_customers_active
+    - count_customers_inactive
+  forbidden:
+    - orders
+    - items
+    - raw_marketing
+    - waiter_names
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  Direct dependents of sushi.orders: order_items, customers, waiters,
+  customer_revenue_by_day, customer_revenue_lifetime, waiter_revenue_by_day,
+  latest_order. Transitive dependents: top_waiters (via waiter_revenue_by_day),
+  active_customers (via customers), waiter_as_customer_by_day (via waiters
+  and customers), count_customers_active/inactive (via customers through
+  blueprint). These are optional because multi-hop transitive impact detection
+  varies by tool.

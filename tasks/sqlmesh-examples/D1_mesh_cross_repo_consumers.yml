@@ -1,0 +1,25 @@
+id: sqlmesh-examples_mesh_01
+repo: sqlmesh-examples
+category: mesh
+difficulty: easy
+question: |
+  In the multi/ sub-project, which models in repo_2 depend on models
+  defined in repo_1?
+tool_hint: find_references
+gold:
+  required:
+    - silver.c
+    - silver.e
+  optional: []
+  forbidden:
+    - silver.d
+    - bronze.a
+    - bronze.b
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  repo_1 defines bronze.a and bronze.b. In repo_2, silver.c (SELECT DISTINCT
+  col_a FROM bronze.a) and silver.e (SELECT * EXCEPT(dup) FROM bronze.a)
+  both reference bronze.a from repo_1. silver.d only references silver.c
+  which is local to repo_2, so it does not have a cross-repo dependency.

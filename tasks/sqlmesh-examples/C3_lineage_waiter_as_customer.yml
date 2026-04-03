@@ -1,0 +1,30 @@
+id: sqlmesh-examples_lineage_03
+repo: sqlmesh-examples
+category: lineage
+difficulty: medium
+question: |
+  What are all the direct upstream dependencies of
+  sushi.waiter_as_customer_by_day?
+tool_hint: trace_dependencies
+gold:
+  required:
+    - waiters
+    - customers
+    - waiter_names
+  optional: []
+  forbidden:
+    - orders
+    - items
+    - order_items
+    - marketing
+    - raw_marketing
+scoring:
+  method: set_match
+  partial_credit: true
+notes: |
+  waiter_as_customer_by_day.sql joins three models: sushi.waiters AS w,
+  sushi.customers AS c (JOIN on w.waiter_id = c.customer_id), and
+  sushi.waiter_names AS wn (JOIN on w.waiter_id = wn.id). The question
+  asks only about direct dependencies, not transitive ones, so orders,
+  items, etc. are forbidden even though they are upstream of waiters
+  and customers.
