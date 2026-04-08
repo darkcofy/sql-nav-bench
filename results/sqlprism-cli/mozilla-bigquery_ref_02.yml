@@ -1,21 +1,21 @@
 task_id: mozilla-bigquery_ref_02
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-08T20:19:37.151994+00:00'
+timestamp: '2026-04-08T20:26:49.414114+00:00'
 answer:
   entities:
   - desktop_dau_data
-  - search_dau_aggregates_v1
+  - search_derived.search_dau_aggregates_v1
   - eligible_markets_dau
-  - search_revenue_levers_daily_v1
+  - search_derived.search_revenue_levers_daily_v1
   - legacy_active_users
-  - desktop_dau_distribution_id_history_v1
+  - firefox_desktop_derived.desktop_dau_distribution_id_history_v1
   - todays_metrics
-  - locale_aggregates_v1
+  - firefox_desktop_derived.locale_aggregates_v1
   - dau
   - active_users
-  - resurrection_week_2_retention_v1
-  - active_users
+  - firefox_desktop_derived.resurrection_week_2_retention_v1
+  - telemetry.active_users
   - desktop_active_users
   explanation: Executed via sqlprism-cli runner
   confidence: high
@@ -26,6 +26,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.228
+  wall_time_seconds: 1.165
   tool_breakdown:
     query_references: 1

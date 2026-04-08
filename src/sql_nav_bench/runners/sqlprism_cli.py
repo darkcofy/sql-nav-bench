@@ -368,7 +368,9 @@ class SqlprismCLIRunner(Runner):
                         elif isinstance(item, dict):
                             name = item.get("name") or item.get("target") or item.get("source") or ""
                             if name:
-                                entities.append(name)
+                                # Derive dataset.table from file path if available
+                                qualified = self._qualify_name(name, item.get("file"))
+                                entities.append(qualified)
             # column-usage rows
             if "columns" in data and isinstance(data["columns"], list):
                 for item in data["columns"]:
@@ -386,6 +388,25 @@ class SqlprismCLIRunner(Runner):
                     entities.append(item.get("name") or item.get("target") or "")
 
         return [e for e in entities if e]
+
+    @staticmethod
+    def _qualify_name(name: str, file_path: str | None) -> str:
+        """Derive dataset.table name from file path when possible.
+
+        BigQuery repos use paths like `project/dataset/table/query.sql`.
+        Returns `dataset.table` if detectable, otherwise just `name`.
+        """
+        if not file_path or "/" not in file_path:
+            return name
+        parts = file_path.rstrip("/").split("/")
+        # Pattern: .../dataset/table_name/query.sql or .../dataset/table_name/view.sql
+        if len(parts) >= 3:
+            dataset = parts[-3]
+            table_dir = parts[-2]
+            # Only qualify if the table_dir matches the node name
+            if table_dir == name:
+                return f"{dataset}.{name}"
+        return name
 
     def _query_references(self, name: str, breakdown: dict[str, int]) -> list[str]:
         # inbound = what references this entity (downstream consumers)
