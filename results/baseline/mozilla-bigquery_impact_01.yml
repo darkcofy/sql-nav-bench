@@ -1,94 +1,94 @@
 task_id: mozilla-bigquery_impact_01
 agent: deterministic-baseline
 tools: baseline
-timestamp: '2026-04-03T11:50:15.447490+00:00'
+timestamp: '2026-04-08T19:54:56.576162+00:00'
 answer:
   entities:
-  - baseline_clients_first_seen.view
-  - cross_channel_events_first_seen.view
-  - mobile_checks
-  - firefox_desktop_glam_release__view_clients_daily_scalar_aggregates_v1
-  - events_stream.view
-  - view_clients_daily_histogram_aggregates_v1
-  - fenix_app_info
-  - query
-  - new_profiles.view
-  - clients_scalar_aggregates_v1.udf
-  - org_mozilla_fenix_glam_nightly__view_clients_daily_scalar_aggregates_v1
-  - new_profile_activations.view
-  - baseline_clients_last_seen_v1.query
-  - event_monitoring_live.view
-  - org_mozilla_fenix_glam_nightly__view_clients_daily_histogram_aggregates_v1
-  - baseline_clients_daily.view
-  - example2
+  - firefox_desktop_glam_nightly__view_clients_daily_scalar_aggregates_v1
+  - org_mozilla_fenix_glam_beta__view_clients_daily_scalar_aggregates_v1
+  - histogram_bucket_counts_v1
+  - view_sample_counts_v1
+  - org_mozilla_fenix_glam_release__view_clients_daily_scalar_aggregates_v1
+  - mobile_search_clients_daily.template
+  - fenix_checks
+  - expect
+  - cross_channel_event_monitoring.view
+  - view_user_counts_v1
+  - metrics_clients_last_seen.query
+  - macros
+  - clients_histogram_aggregates_new_v1.init
+  - engagement.view
+  - shredder_mitigation_checks_template
+  - baseline_clients_first_seen_v1.query
   - generate_body
   - baseline_clients_daily_v1.query
-  - histogram_bucket_counts_v1
-  - stored_procedure
-  - firefox_desktop_glam_beta__view_clients_daily_histogram_aggregates_v1
-  - org_mozilla_fenix_glam_beta__view_clients_daily_scalar_aggregates_v1
-  - focus_android_view
-  - baseline_clients_first_seen_v1.query
-  - probe_counts_v1
-  - mobile_view
-  - cross_channel_events_stream.query
-  - desktop_checks
-  - view_probe_counts_v1
-  - clients_scalar_aggregates_v1
-  - checks
-  - contains
-  - cross_channel_event_monitoring.view
-  - baseline_clients_last_seen.view
-  - scalar_bucket_counts_v1.udf
-  - org_mozilla_fenix_glam_release__view_clients_daily_histogram_aggregates_v1
-  - metrics_clients_daily.query
-  - clients_histogram_aggregates_v1.udf
-  - desktop_query
-  - fenix_checks
-  - extract_user_counts_v1
-  - retention.view
-  - clients_scalar_aggregates_new_v1
-  - to_iso8601
-  - date_trunc
-  - shredder_mitigation_checks_template
-  - event_flow_monitoring_aggregates_v1.script
-  - cross_channel_events_unnested.view
-  - events_first_seen_v1.query
-  - new_profile_activation_clients.view
-  - clients_histogram_aggregates_v1
-  - firefox_desktop_glam_nightly__view_clients_daily_scalar_aggregates_v1
-  - cross_channel.view
-  - view
-  - app_ping_view.view
-  - script
-  - firefox_desktop_glam_beta__view_clients_daily_scalar_aggregates_v1
-  - org_mozilla_fenix_glam_release__view_clients_daily_scalar_aggregates_v1
-  - events_first_seen.view
   - attribution_clients.view
-  - expect
-  - metrics_clients_last_seen.view
-  - clients_histogram_aggregates_new_v1.init
-  - clients_last_seen_joined.view
-  - date_format
-  - input
-  - baseline_clients_last_seen_v1.checks
-  - materialized_view
-  - metrics_clients_last_seen.query
-  - extract_probe_counts_v1
-  - view_sample_counts_v1
-  - view_clients_daily_scalar_aggregates_v1
-  - mobile_search_clients_daily.template
-  - engagement.view
-  - org_mozilla_fenix_glam_beta__view_clients_daily_histogram_aggregates_v1
-  - view_user_counts_v1
-  - clients_histogram_aggregates_new_v1
-  - metrics_clients_daily.view
+  - firefox_desktop_glam_release__view_clients_daily_scalar_aggregates_v1
+  - script
   - firefox_desktop_glam_release__view_clients_daily_histogram_aggregates_v1
+  - desktop_query
+  - to_iso8601
+  - org_mozilla_fenix_glam_nightly__view_clients_daily_scalar_aggregates_v1
+  - example2
+  - cross_channel.view
+  - firefox_desktop_glam_beta__view_clients_daily_histogram_aggregates_v1
+  - clients_histogram_aggregates_v1
+  - extract_user_counts_v1
+  - org_mozilla_fenix_glam_release__view_clients_daily_histogram_aggregates_v1
+  - new_profiles.view
+  - date_format
+  - baseline_clients_last_seen_v1.query
+  - date_trunc
+  - new_profile_activation_clients.view
+  - baseline_clients_last_seen_v1.checks
+  - desktop_checks
+  - view_clients_daily_histogram_aggregates_v1
+  - contains
+  - clients_scalar_aggregates_v1
+  - view_clients_daily_scalar_aggregates_v1
+  - firefox_desktop_glam_beta__view_clients_daily_scalar_aggregates_v1
+  - input
+  - clients_scalar_aggregates_v1.udf
+  - events_stream.view
+  - query
+  - materialized_view
+  - events_first_seen_v1.query
+  - metrics_clients_daily.view
   - events_stream_v1.query
-  - udf
+  - mobile_checks
+  - metrics_clients_daily.query
+  - clients_last_seen_joined.view
   - firefox_desktop_glam_nightly__view_clients_daily_histogram_aggregates_v1
-  - macros
+  - view_probe_counts_v1
+  - udf
+  - event_monitoring_live.view
+  - cross_channel_events_stream.query
+  - app_ping_view.view
   - scalar_bucket_counts_v1
+  - focus_android_view
+  - fenix_app_info
+  - scalar_bucket_counts_v1.udf
+  - clients_histogram_aggregates_new_v1
+  - baseline_clients_first_seen.view
+  - org_mozilla_fenix_glam_nightly__view_clients_daily_histogram_aggregates_v1
+  - metrics_clients_last_seen.view
+  - probe_counts_v1
+  - cross_channel_events_unnested.view
+  - retention.view
+  - events_first_seen.view
+  - baseline_clients_daily.view
+  - event_flow_monitoring_aggregates_v1.script
+  - org_mozilla_fenix_glam_beta__view_clients_daily_histogram_aggregates_v1
+  - new_profile_activations.view
+  - clients_histogram_aggregates_v1.udf
+  - view
+  - clients_scalar_aggregates_new_v1
+  - checks
+  - cross_channel_events_first_seen.view
+  - mobile_view
+  - stored_procedure
+  - baseline_clients_last_seen.view
+  - extract_probe_counts_v1
   explanation: Executed via baseline runner
   confidence: high
 metrics:
@@ -98,7 +98,7 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 3.336
+  wall_time_seconds: 4.915
   tool_breakdown:
     grep: 60
     file_read: 0

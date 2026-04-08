@@ -1,33 +1,22 @@
 task_id: jaffle-mesh_lineage_01
 agent: deterministic-baseline
 tools: baseline
-timestamp: '2026-04-03T11:28:55.068696+00:00'
+timestamp: '2026-04-08T19:54:52.511721+00:00'
 answer:
   entities:
-  - order_items_table
-  - stg_products
-  - joined
-  - stg_supplies
-  - order_items
   - compute_booleans
-  - stg_orders
-  - supplies
-  - products
-  - source
-  - stg_order_items
-  - order_supplies_summary
+  - order_items_table
   - order_items_summary
-  - renamed
   explanation: Executed via baseline runner
   confidence: high
 metrics:
-  tool_calls: 8
-  search_calls: 8
-  files_opened: 8
+  tool_calls: 1
+  search_calls: 1
+  files_opened: 1
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.012
+  wall_time_seconds: 0.019
   tool_breakdown:
     grep: 0
-    file_read: 8
+    file_read: 1

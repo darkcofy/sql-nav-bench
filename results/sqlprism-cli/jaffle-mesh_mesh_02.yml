@@ -1,9 +1,14 @@
 task_id: jaffle-mesh_mesh_02
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-03T11:47:12.059543+00:00'
+timestamp: '2026-04-08T20:18:21.847491+00:00'
 answer:
-  entities: []
+  entities:
+  - not_null_stg_order_items_order_item_id
+  - stg_order_items
+  - unique_stg_order_items_order_item_id
+  - order_items
+  - joined
   explanation: Executed via sqlprism-cli runner
   confidence: high
 metrics:
@@ -13,6 +18,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.831
+  wall_time_seconds: 1.377
   tool_breakdown:
     query_trace: 1

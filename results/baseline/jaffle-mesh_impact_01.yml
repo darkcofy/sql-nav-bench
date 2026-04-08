@@ -1,23 +1,35 @@
 task_id: jaffle-mesh_impact_01
 agent: deterministic-baseline
 tools: baseline
-timestamp: '2026-04-03T11:28:55.043756+00:00'
+timestamp: '2026-04-08T19:54:52.358044+00:00'
 answer:
   entities:
+  - not_null_orders_order_id
   - stg_customers
+  - unique_stg_orders_order_id
+  - not_null_stg_customers_customer_id
   - order_items
+  - unique_orders_order_id
+  - unique_stg_customers_customer_id
+  - unique_stg_order_items_order_item_id
+  - unique_customers_customer_id
   - customers
+  - not_null_stg_orders_order_id
+  - not_null_customers_customer_id
+  - accepted_values_customers_customer_type__new__returning
   - orders
+  - relationships_orders_0389c224a99a98c0b58aedb753f052f0
+  - not_null_stg_order_items_order_item_id
   explanation: Executed via baseline runner
   confidence: high
 metrics:
-  tool_calls: 4
-  search_calls: 4
+  tool_calls: 11
+  search_calls: 11
   files_opened: 0
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.009
+  wall_time_seconds: 0.114
   tool_breakdown:
-    grep: 4
+    grep: 11
     file_read: 0

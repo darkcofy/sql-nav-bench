@@ -1,9 +1,13 @@
 task_id: mozilla-bigquery_impact_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-03T11:51:01.091707+00:00'
+timestamp: '2026-04-08T20:19:39.568518+00:00'
 answer:
-  entities: []
+  entities:
+  - clients_last_seen
+  - clients_last_seen_v2
+  - days_since
+  - desktop_active_users
   explanation: Executed via sqlprism-cli runner
   confidence: high
 metrics:
@@ -13,6 +17,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.815
+  wall_time_seconds: 1.216
   tool_breakdown:
     query_trace: 1

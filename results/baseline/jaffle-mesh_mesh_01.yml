@@ -1,13 +1,13 @@
 task_id: jaffle-mesh_mesh_01
 agent: deterministic-baseline
 tools: baseline
-timestamp: '2026-04-03T11:28:55.078044+00:00'
+timestamp: '2026-04-08T19:54:52.618538+00:00'
 answer:
   entities:
   - supplies
+  - products
   - order_items
   - locations
-  - products
   explanation: Executed via baseline runner
   confidence: high
 metrics:
@@ -17,7 +17,7 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.003
+  wall_time_seconds: 0.011
   tool_breakdown:
     grep: 1
     file_read: 0

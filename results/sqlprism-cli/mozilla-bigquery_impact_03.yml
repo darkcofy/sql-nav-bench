@@ -1,9 +1,20 @@
 task_id: mozilla-bigquery_impact_03
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-03T11:51:02.758688+00:00'
+timestamp: '2026-04-08T20:19:41.991197+00:00'
 answer:
-  entities: []
+  entities:
+  - adm_forecasting_v1
+  - client_counts
+  - client_shares
+  - daily_mobile_clients
+  - suggest_clients
+  - suggest_revenue_levers_daily_v1
+  - client_share
+  - grand_total
+  - mobile_population
+  - population
+  - unified_metrics
   explanation: Executed via sqlprism-cli runner
   confidence: high
 metrics:
@@ -13,6 +24,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.811
+  wall_time_seconds: 1.287
   tool_breakdown:
     query_trace: 1

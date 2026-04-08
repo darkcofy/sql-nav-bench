@@ -24,6 +24,7 @@ repos:
 
   mozilla-bigquery:
     type: sql
+    dialect: bigquery
     sources:
       - url: https://github.com/mozilla/bigquery-etl
         path: .

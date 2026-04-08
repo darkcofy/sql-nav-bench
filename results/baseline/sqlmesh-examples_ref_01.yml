@@ -1,18 +1,18 @@
 task_id: sqlmesh-examples_ref_01
 agent: deterministic-baseline
 tools: baseline
-timestamp: '2026-04-03T11:50:28.566167+00:00'
+timestamp: '2026-04-08T19:54:53.373739+00:00'
 answer:
   entities:
+  - customer_revenue_by_day
+  - waiters
   - latest_order
+  - metrics
+  - waiter_revenue_by_day_v1
+  - customers
   - customer_revenue_lifetime
   - waiter_revenue_by_day
-  - waiter_revenue_by_day_v1
-  - waiters
-  - metrics
   - full_model
-  - customer_revenue_by_day
-  - customers
   explanation: Executed via baseline runner
   confidence: high
 metrics:
@@ -22,7 +22,7 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.004
+  wall_time_seconds: 0.015
   tool_breakdown:
     grep: 1
     file_read: 0

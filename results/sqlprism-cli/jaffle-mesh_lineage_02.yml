@@ -1,7 +1,7 @@
 task_id: jaffle-mesh_lineage_02
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-03T11:47:10.368271+00:00'
+timestamp: '2026-04-08T20:18:19.130371+00:00'
 answer:
   entities: []
   explanation: Executed via sqlprism-cli runner
@@ -13,6 +13,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.849
+  wall_time_seconds: 1.329
   tool_breakdown:
     query_column_usage: 1

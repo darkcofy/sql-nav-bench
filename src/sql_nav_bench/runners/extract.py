@@ -15,8 +15,20 @@ def extract_entities(task: Task) -> dict[str, str | None]:
     question = task.question
     result: dict[str, str | None] = {"model": None, "column": None, "project": None}
 
-    # Extract backtick-quoted names
-    backtick_names = re.findall(r"`(\w+)`", question)
+    # Extract backtick-quoted names (handle fully-qualified like `project.dataset.table`)
+    backtick_raw = re.findall(r"`([^`]+)`", question)
+    # For FQ names, take the last component (table name)
+    backtick_names = []
+    for name in backtick_raw:
+        parts = name.split(".")
+        last = parts[-1]
+        if last and re.match(r"^\w+$", last):
+            backtick_names.append(last)
+
+    # Extract dotted model names like sushi.orders → orders
+    dotted_names = re.findall(r"\b(\w+)\.(\w+)\b", question)
+    dotted_table_names = [tbl for _schema, tbl in dotted_names
+                          if tbl.lower() not in ("sql", "yml", "yaml", "py")]
 
     # Project extraction (do this early so we don't confuse project with model)
     proj_match = re.search(r"(?:from|in)\s+the\s+(\w+)\s+project", question, re.IGNORECASE)
@@ -90,10 +102,23 @@ def extract_entities(task: Task) -> dict[str, str | None]:
 
     # Backtick names override if we got a bad match or no match
     if backtick_names:
-        # Use first backtick name that isn't the project
+        # Use first backtick name that isn't the project and looks like a table
         for bn in backtick_names:
-            if bn != result.get("project"):
+            if bn != result.get("project") and "_" in bn:
                 result["model"] = bn
+                break
+
+    # Dotted names (sushi.orders) override generic matches
+    if dotted_table_names and (
+        not result["model"]
+        or result["model"] in ("is", "models", "derived", "platform", "sushi")
+        or result["model"] == result.get("project")
+    ):
+        for dn in dotted_table_names:
+            if dn != result.get("project") and dn.lower() not in (
+                "the", "all", "which", "what", "from", "that", "this",
+            ):
+                result["model"] = dn
                 break
 
     # Final fallback: use project as model if nothing else found
