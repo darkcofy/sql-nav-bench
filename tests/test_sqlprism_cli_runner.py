@@ -60,6 +60,62 @@ class TestSqlprismCLIRunner:
         assert "upstream_a" in entities
 
     @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
+    def test_trace_column_lineage_with_column(self, mock_run: MagicMock):
+        """trace_column_lineage tasks use query lineage (not column-usage)."""
+        lineage_response = '{"chains": [{"output_node": "customer_revenue_by_day", "output_column": "revenue", "chain_index": 0, "hops": [{"index": 0, "column": "total", "table": "order_items"}, {"index": 1, "column": "price", "table": "items"}], "file": "models/customer_revenue_by_day.sql", "repo": "sushi"}], "total_count": 1}'
+        mock_run.return_value = MagicMock(
+            returncode=0,
+            stdout=lineage_response,
+            stderr="",
+        )
+        runner = SqlprismCLIRunner()
+        task = _make_task(
+            "trace_column_lineage",
+            "Trace the lineage of the 'revenue' column in customer_revenue_by_day.",
+            "lineage",
+        )
+        entities, breakdown = runner.run_task(task, Path("/tmp/repo"))
+        assert "order_items" in entities
+        assert "items" in entities
+        assert "query_lineage" in breakdown
+        # Should NOT have used column-usage
+        assert "query_column_usage" not in breakdown
+
+    @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
+    def test_trace_column_lineage_without_column(self, mock_run: MagicMock):
+        """trace_column_lineage tasks without a column still use query lineage."""
+        lineage_response = '{"chains": [{"output_node": "top_waiters", "output_column": "total_orders", "chain_index": 0, "hops": [{"index": 0, "column": "waiter_id", "table": "orders"}], "file": "models/top_waiters.sql", "repo": "sushi"}], "total_count": 1}'
+        mock_run.return_value = MagicMock(
+            returncode=0,
+            stdout=lineage_response,
+            stderr="",
+        )
+        runner = SqlprismCLIRunner()
+        task = _make_task(
+            "trace_column_lineage",
+            "What upstream models feed top_waiters?",
+            "lineage",
+        )
+        entities, breakdown = runner.run_task(task, Path("/tmp/repo"))
+        assert "orders" in entities
+        assert "query_lineage" in breakdown
+
+    @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
+    def test_parse_entities_chains_deduplicates(self, mock_run: MagicMock):
+        """Chains with duplicate hop tables should deduplicate."""
+        lineage_response = '{"chains": [{"hops": [{"table": "orders"}, {"table": "items"}]}, {"hops": [{"table": "orders"}, {"table": "customers"}]}], "total_count": 2}'
+        mock_run.return_value = MagicMock(
+            returncode=0,
+            stdout=lineage_response,
+            stderr="",
+        )
+        runner = SqlprismCLIRunner()
+        entities = runner._parse_entities(lineage_response)
+        assert entities.count("orders") == 1
+        assert "items" in entities
+        assert "customers" in entities
+
+    @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
     def test_tool_breakdown_counts(self, mock_run: MagicMock):
         mock_run.return_value = MagicMock(
             returncode=0, stdout="model_a\n", stderr=""

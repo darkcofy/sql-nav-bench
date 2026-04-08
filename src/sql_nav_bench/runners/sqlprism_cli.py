@@ -311,10 +311,7 @@ class SqlprismCLIRunner(Runner):
             # Dependencies = what do I depend on = outbound refs = downstream in sqlprism's edge model
             entities = self._query_trace(model, "downstream", breakdown)
         elif task.tool_hint == "trace_column_lineage":
-            if column:
-                entities = self._query_column_usage(model, column, breakdown)
-            else:
-                entities = self._query_lineage(model, breakdown)
+            entities = self._query_lineage(model, breakdown, column=column)
         elif task.tool_hint == "reindex":
             entities = self._query_references(model, breakdown)
         else:
@@ -371,6 +368,16 @@ class SqlprismCLIRunner(Runner):
                                 # Derive dataset.table from file path if available
                                 qualified = self._qualify_name(name, item.get("file"))
                                 entities.append(qualified)
+            # column lineage chains: {"chains": [{"hops": [{"table": ...}]}]}
+            if "chains" in data and isinstance(data["chains"], list):
+                seen_tables: set[str] = set()
+                for chain in data["chains"]:
+                    if isinstance(chain, dict):
+                        for hop in chain.get("hops", []):
+                            table = hop.get("table", "")
+                            if table and table not in seen_tables:
+                                seen_tables.add(table)
+                                entities.append(table)
             # column-usage rows
             if "columns" in data and isinstance(data["columns"], list):
                 for item in data["columns"]:
@@ -424,7 +431,10 @@ class SqlprismCLIRunner(Runner):
         breakdown["query_column_usage"] = breakdown.get("query_column_usage", 0) + 1
         return self._parse_entities(output)
 
-    def _query_lineage(self, model: str, breakdown: dict[str, int]) -> list[str]:
-        output = self._run_sqlprism(["query", "lineage", "--output-node", model])
+    def _query_lineage(self, model: str, breakdown: dict[str, int], column: str | None = None) -> list[str]:
+        args = ["query", "lineage", "--output-node", model]
+        if column:
+            args.extend(["--column", column])
+        output = self._run_sqlprism(args)
         breakdown["query_lineage"] = breakdown.get("query_lineage", 0) + 1
         return self._parse_entities(output)
