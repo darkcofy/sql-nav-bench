@@ -1,7 +1,7 @@
 task_id: jaffle-mesh_reindex_01
 agent: deterministic-baseline
 tools: baseline
-timestamp: '2026-04-03T11:28:55.094350+00:00'
+timestamp: '2026-04-08T19:54:52.702215+00:00'
 answer:
   entities: []
   explanation: Executed via baseline runner
@@ -13,7 +13,7 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.002
+  wall_time_seconds: 0.01
   tool_breakdown:
     grep: 1
     file_read: 0

@@ -1,7 +1,7 @@
-task_id: sqlmesh-examples_mesh_02
+task_id: cal-itp_reindex_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-08T20:17:55.191178+00:00'
+timestamp: '2026-04-08T09:44:47.468286+00:00'
 answer:
   entities: []
   explanation: Executed via sqlprism-cli runner
@@ -13,6 +13,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.312
+  wall_time_seconds: 1.295
   tool_breakdown:
-    query_trace: 1
+    query_references: 1

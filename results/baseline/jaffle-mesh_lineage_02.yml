@@ -1,20 +1,26 @@
 task_id: jaffle-mesh_lineage_02
 agent: deterministic-baseline
 tools: baseline
-timestamp: '2026-04-03T11:28:55.074729+00:00'
+timestamp: '2026-04-08T19:54:52.606261+00:00'
 answer:
   entities:
   - stg_customers
+  - not_null_stg_customers_customer_id
+  - unique_stg_customers_customer_id
+  - unique_customers_customer_id
+  - not_null_customers_customer_id
+  - relationships_orders_0389c224a99a98c0b58aedb753f052f0
+  - accepted_values_customers_customer_type__new__returning
   explanation: Executed via baseline runner
   confidence: high
 metrics:
-  tool_calls: 3
-  search_calls: 3
-  files_opened: 1
+  tool_calls: 15
+  search_calls: 15
+  files_opened: 7
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.005
+  wall_time_seconds: 0.093
   tool_breakdown:
-    grep: 2
-    file_read: 1
+    grep: 8
+    file_read: 7

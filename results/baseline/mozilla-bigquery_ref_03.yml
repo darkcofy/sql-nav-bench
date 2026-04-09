@@ -1,87 +1,10 @@
 task_id: mozilla-bigquery_ref_03
 agent: deterministic-baseline
 tools: baseline
-timestamp: '2026-04-03T11:50:12.110002+00:00'
+timestamp: '2026-04-08T19:54:51.660301+00:00'
 answer:
   entities:
-  - baseline_clients_first_seen.view
-  - firefox_desktop_glam_release__view_clients_daily_scalar_aggregates_v1
-  - fenix_app_info
-  - query
-  - new_profiles.view
-  - org_mozilla_fenix_glam_nightly__view_clients_daily_scalar_aggregates_v1
-  - new_profile_activations.view
-  - org_mozilla_fenix_glam_nightly__view_clients_daily_histogram_aggregates_v1
-  - baseline_clients_daily.view
-  - baseline_clients_daily_v1.query
-  - histogram_bucket_counts_v1
-  - stored_procedure
-  - firefox_desktop_glam_beta__view_clients_daily_histogram_aggregates_v1
-  - org_mozilla_fenix_glam_beta__view_clients_daily_scalar_aggregates_v1
-  - focus_android_view
-  - baseline_clients_first_seen_v1.query
-  - probe_counts_v1
-  - mobile_view
-  - cross_channel_events_stream.query
-  - desktop_deletion_request_query
-  - desktop_checks
-  - event_monitoring_aggregates_v1.query
-  - checks
-  - contains
-  - cross_channel_event_monitoring.view
-  - clients_daily_scalar_aggregates_v1
-  - baseline_clients_last_seen.view
-  - org_mozilla_fenix_glam_release__view_clients_daily_histogram_aggregates_v1
-  - metrics_clients_daily.query
-  - clients_histogram_aggregates_v1.udf
-  - desktop_query
-  - fenix_checks
-  - retention.view
-  - latest_versions_v1
-  - event_error_monitoring_aggregates_v1.query
-  - event_flow_monitoring_aggregates_v1.script
-  - full_hist_extract
-  - cross_channel_events_unnested.view
-  - string_bit_patterns
-  - clients_daily_histogram_aggregates_v1
-  - new_profile_activation_clients.view
-  - table_partition_expirations
-  - retention_clients.view
-  - firefox_desktop_glam_nightly__view_clients_daily_scalar_aggregates_v1
-  - extract_week_specific_bits
-  - cross_channel.view
   - view
-  - new_profile_activation_clients.query
-  - app_ping_view.view
-  - script
-  - firefox_desktop_glam_beta__view_clients_daily_scalar_aggregates_v1
-  - init
-  - org_mozilla_fenix_glam_release__view_clients_daily_scalar_aggregates_v1
-  - attribution_clients.view
-  - expect
-  - query_fenix
-  - active_users.view
-  - input
-  - baseline_clients_last_seen_v1.checks
-  - query_ff_desktop
-  - use_counter_hist_extract
-  - materialized_view
-  - extract_probe_counts_v1
-  - mobile_search_clients_daily.template
-  - engagement.view
-  - org_mozilla_fenix_glam_beta__view_clients_daily_histogram_aggregates_v1
-  - clients_histogram_aggregates_new_v1
-  - mobile_deletion_request_query
-  - firefox_desktop_glam_release__view_clients_daily_histogram_aggregates_v1
-  - events_stream_v1.query
-  - udf
-  - bits28_days_since_seen
-  - attribution_clients.query
-  - firefox_desktop_glam_nightly__view_clients_daily_histogram_aggregates_v1
-  - ios.template
-  - macros
-  - event_monitoring_live_v1.materialized_view
-  - scalar_bucket_counts_v1
   explanation: Executed via baseline runner
   confidence: high
 metrics:
@@ -91,7 +14,7 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.062
+  wall_time_seconds: 0.089
   tool_breakdown:
     grep: 1
     file_read: 0

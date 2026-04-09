@@ -1,9 +1,10 @@
 task_id: mozilla-bigquery_ref_03
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-03T11:51:00.275377+00:00'
+timestamp: '2026-04-08T20:26:50.728921+00:00'
 answer:
-  entities: []
+  entities:
+  - crashes_daily
   explanation: Executed via sqlprism-cli runner
   confidence: high
 metrics:
@@ -13,6 +14,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.79
+  wall_time_seconds: 1.314
   tool_breakdown:
     query_references: 1

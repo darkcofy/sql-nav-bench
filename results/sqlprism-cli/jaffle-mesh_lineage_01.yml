@@ -1,9 +1,15 @@
 task_id: jaffle-mesh_lineage_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-03T11:47:09.517893+00:00'
+timestamp: '2026-04-08T20:18:17.799882+00:00'
 answer:
-  entities: []
+  entities:
+  - stg_orders
+  - compute_booleans
+  - order_items
+  - order_items_summary
+  - order_items_table
+  - orders
   explanation: Executed via sqlprism-cli runner
   confidence: high
 metrics:
@@ -13,6 +19,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.915
+  wall_time_seconds: 1.411
   tool_breakdown:
     query_trace: 1

@@ -1,46 +1,33 @@
 task_id: sqlmesh-examples_impact_01
 agent: deterministic-baseline
 tools: baseline
-timestamp: '2026-04-03T11:50:28.644192+00:00'
+timestamp: '2026-04-08T19:54:53.459535+00:00'
 answer:
   entities:
-  - seed_model
-  - items
-  - log_value
-  - incremental
-  - metrics
-  - waiter_as_customer_by_day
-  - full_model
   - customer_revenue_by_day
-  - assert_positive_order_ids
-  - distinct
-  - assert_item_price_above_zero
-  - waiter_names
-  - raw_demographics
-  - order_items
-  - order_item_f
-  - marketing
-  - customer_d
-  - waiter_revenue_by_day
-  - waiter_revenue_by_day_v1
   - waiters
-  - blueprint
-  - customer_revenue_lifetime
   - top_waiters
+  - waiter_revenue_by_day
+  - latest_order
   - active_customers
-  - incremental_model
-  - disabled
+  - waiter_as_customer_by_day
+  - waiter_revenue_by_day_v1
   - customers
+  - customer_revenue_lifetime
+  - blueprint
+  - marketing
+  - metrics
+  - full_model
   explanation: Executed via baseline runner
   confidence: high
 metrics:
-  tool_calls: 28
-  search_calls: 28
+  tool_calls: 15
+  search_calls: 15
   files_opened: 0
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 0.073
+  wall_time_seconds: 0.078
   tool_breakdown:
-    grep: 28
+    grep: 15
     file_read: 0

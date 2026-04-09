@@ -1,7 +1,7 @@
 task_id: mozilla-bigquery_lineage_01
 agent: deterministic-baseline
 tools: baseline
-timestamp: '2026-04-03T11:50:22.341083+00:00'
+timestamp: '2026-04-08T19:55:04.801666+00:00'
 answer:
   entities: []
   explanation: Executed via baseline runner
