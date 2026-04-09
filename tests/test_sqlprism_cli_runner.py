@@ -61,8 +61,8 @@ class TestSqlprismCLIRunner:
 
     @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
     def test_trace_column_lineage_with_column(self, mock_run: MagicMock):
-        """trace_column_lineage tasks use query lineage (not column-usage)."""
-        lineage_response = '{"chains": [{"output_node": "customer_revenue_by_day", "output_column": "revenue", "chain_index": 0, "hops": [{"index": 0, "column": "total", "table": "order_items"}, {"index": 1, "column": "price", "table": "items"}], "file": "models/customer_revenue_by_day.sql", "repo": "sushi"}], "total_count": 1}'
+        """trace_column_lineage tasks use query lineage and extract model names from expressions."""
+        lineage_response = '{"chains": [{"output_node": "customer_revenue_by_day", "output_column": "revenue", "chain_index": 0, "hops": [{"index": 0, "column": "revenue", "table": "WITH", "expression": "SUM(\\"ot\\".total) AS \\"revenue\\""}, {"index": 1, "column": "total", "table": "ot", "expression": "SUM(\\"oi\\".quantity * \\"i\\".price) AS \\"total\\""}, {"index": 2, "column": "price", "table": "\\"i\\"", "expression": "\\"memory\\".\\"sushi\\".\\"items\\" AS \\"i\\""}], "file": "models/customer_revenue_by_day.sql", "repo": "sushi"}, {"output_node": "customer_revenue_by_day", "output_column": "revenue", "chain_index": 1, "hops": [{"index": 0, "column": "revenue", "table": "WITH", "expression": "SUM(\\"ot\\".total) AS \\"revenue\\""}, {"index": 1, "column": "total", "table": "ot", "expression": "SUM(\\"oi\\".quantity * \\"i\\".price) AS \\"total\\""}, {"index": 2, "column": "quantity", "table": "\\"oi\\"", "expression": "\\"memory\\".\\"sushi\\".\\"order_items\\" AS \\"oi\\""}], "file": "models/customer_revenue_by_day.sql", "repo": "sushi"}], "total_count": 2}'
         mock_run.return_value = MagicMock(
             returncode=0,
             stdout=lineage_response,
@@ -75,16 +75,18 @@ class TestSqlprismCLIRunner:
             "lineage",
         )
         entities, breakdown = runner.run_task(task, Path("/tmp/repo"))
-        assert "order_items" in entities
         assert "items" in entities
+        assert "order_items" in entities
+        # CTE aliases should NOT appear
+        assert "ot" not in entities
+        assert "WITH" not in entities
         assert "query_lineage" in breakdown
-        # Should NOT have used column-usage
         assert "query_column_usage" not in breakdown
 
     @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
     def test_trace_column_lineage_without_column(self, mock_run: MagicMock):
         """trace_column_lineage tasks without a column still use query lineage."""
-        lineage_response = '{"chains": [{"output_node": "top_waiters", "output_column": "total_orders", "chain_index": 0, "hops": [{"index": 0, "column": "waiter_id", "table": "orders"}], "file": "models/top_waiters.sql", "repo": "sushi"}], "total_count": 1}'
+        lineage_response = '{"chains": [{"output_node": "top_waiters", "output_column": "total_orders", "chain_index": 0, "hops": [{"index": 0, "column": "waiter_id", "table": "orders", "expression": ""}], "file": "models/top_waiters.sql", "repo": "sushi"}], "total_count": 1}'
         mock_run.return_value = MagicMock(
             returncode=0,
             stdout=lineage_response,
@@ -103,7 +105,7 @@ class TestSqlprismCLIRunner:
     @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
     def test_parse_entities_chains_deduplicates(self, mock_run: MagicMock):
         """Chains with duplicate hop tables should deduplicate."""
-        lineage_response = '{"chains": [{"hops": [{"table": "orders"}, {"table": "items"}]}, {"hops": [{"table": "orders"}, {"table": "customers"}]}], "total_count": 2}'
+        lineage_response = '{"chains": [{"hops": [{"table": "orders", "expression": ""}, {"table": "items", "expression": ""}]}, {"hops": [{"table": "orders", "expression": ""}, {"table": "customers", "expression": ""}]}], "total_count": 2}'
         mock_run.return_value = MagicMock(
             returncode=0,
             stdout=lineage_response,
@@ -114,6 +116,24 @@ class TestSqlprismCLIRunner:
         assert entities.count("orders") == 1
         assert "items" in entities
         assert "customers" in entities
+
+    def test_extract_source_from_hop_qualified_name(self):
+        """Extract model name from qualified AS expression."""
+        runner = SqlprismCLIRunner()
+        hop = {"table": '"i"', "expression": '"memory"."sushi"."items" AS "i"'}
+        assert runner._extract_source_from_hop(hop) == "items"
+
+    def test_extract_source_from_hop_fallback_to_table(self):
+        """Fall back to table name when no AS expression."""
+        runner = SqlprismCLIRunner()
+        hop = {"table": "orders", "expression": ""}
+        assert runner._extract_source_from_hop(hop) == "orders"
+
+    def test_extract_source_from_hop_skips_with(self):
+        """Skip CTE markers like WITH."""
+        runner = SqlprismCLIRunner()
+        hop = {"table": "WITH", "expression": "SUM(x) AS total"}
+        assert runner._extract_source_from_hop(hop) == ""
 
     @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
     def test_tool_breakdown_counts(self, mock_run: MagicMock):

@@ -368,16 +368,20 @@ class SqlprismCLIRunner(Runner):
                                 # Derive dataset.table from file path if available
                                 qualified = self._qualify_name(name, item.get("file"))
                                 entities.append(qualified)
-            # column lineage chains: {"chains": [{"hops": [{"table": ...}]}]}
+            # column lineage chains: {"chains": [{"hops": [{"table": ..., "expression": ...}]}]}
+            # Leaf hops (last in chain) contain source model refs in expressions
+            # like: "memory"."sushi"."items" AS "i"
             if "chains" in data and isinstance(data["chains"], list):
                 seen_tables: set[str] = set()
                 for chain in data["chains"]:
-                    if isinstance(chain, dict):
-                        for hop in chain.get("hops", []):
-                            table = hop.get("table", "")
-                            if table and table not in seen_tables:
-                                seen_tables.add(table)
-                                entities.append(table)
+                    if not isinstance(chain, dict):
+                        continue
+                    hops = chain.get("hops", [])
+                    for hop in hops:
+                        table = self._extract_source_from_hop(hop)
+                        if table and table not in seen_tables:
+                            seen_tables.add(table)
+                            entities.append(table)
             # column-usage rows
             if "columns" in data and isinstance(data["columns"], list):
                 for item in data["columns"]:
@@ -395,6 +399,36 @@ class SqlprismCLIRunner(Runner):
                     entities.append(item.get("name") or item.get("target") or "")
 
         return [e for e in entities if e]
+
+    @staticmethod
+    def _extract_source_from_hop(hop: dict) -> str:
+        """Extract the source model name from a column lineage hop.
+
+        Hop tables are often CTE aliases (e.g., "ot", "i"). The actual source
+        model name is in the expression for leaf hops — table reference patterns:
+          "memory"."sushi"."items" AS "i"
+          "sushi"."order_items" AS "oi"
+        Returns the last unquoted segment of the qualified name, or empty string
+        for intermediate CTE/subquery hops.
+        """
+        import re
+        expr = hop.get("expression", "")
+        # Match: qualified_table_ref AS alias (must contain dots = qualified name)
+        # e.g. "memory"."sushi"."items" AS "i" → items
+        # Does NOT match: SUM(x) AS "total" (function expressions)
+        as_match = re.match(r'^((?:"[^"]+"|[\w]+)(?:\.(?:"[^"]+"|[\w]+))+)\s+AS\s+', expr, re.IGNORECASE)
+        if as_match:
+            qualified = as_match.group(1)
+            parts = qualified.split(".")
+            return parts[-1].strip('"').strip("'")
+        # Fallback: use the table field, skip CTE-like names
+        table = hop.get("table", "").strip('"').strip("'")
+        if table and table.upper() not in ("WITH", "SUBQUERY"):
+            # Skip short aliases (1-3 chars) that are likely CTE aliases
+            if len(table) <= 3 and table.isalpha():
+                return ""
+            return table
+        return ""
 
     @staticmethod
     def _qualify_name(name: str, file_path: str | None) -> str:
