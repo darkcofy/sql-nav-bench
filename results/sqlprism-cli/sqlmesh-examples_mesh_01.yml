@@ -1,18 +1,21 @@
 task_id: sqlmesh-examples_mesh_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-21T13:52:50.390392+00:00'
+timestamp: '2026-04-21T14:46:52.416126+00:00'
 answer:
-  entities: []
+  entities:
+  - silver.c
+  - silver.e
   explanation: Executed via sqlprism-cli runner
   confidence: high
 metrics:
-  tool_calls: 1
+  tool_calls: 6
   search_calls: 0
   files_opened: 0
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.078
+  wall_time_seconds: 7.622
   tool_breakdown:
-    query_references: 1
+    query_search: 3
+    query_references: 3

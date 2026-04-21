@@ -1,7 +1,7 @@
 task_id: jaffle-mesh_lineage_02
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-21T13:54:05.397513+00:00'
+timestamp: '2026-04-21T14:47:12.587788+00:00'
 answer:
   entities:
   - stg_customers
@@ -16,7 +16,7 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 2.453
+  wall_time_seconds: 2.181
   tool_breakdown:
     query_lineage: 1
     query_trace: 1

@@ -1,12 +1,12 @@
 task_id: sqlmesh-examples_ref_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-21T13:52:41.664373+00:00'
+timestamp: '2026-04-21T14:46:36.489862+00:00'
 answer:
   entities:
-  - latest_order
-  - waiter_as_customer_by_day
   - customer_revenue_by_day
+  - waiter_as_customer_by_day
+  - latest_order
   - waiter_revenue_by_day
   - customers
   - waiters
@@ -20,6 +20,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.114
+  wall_time_seconds: 1.167
   tool_breakdown:
     query_references: 1

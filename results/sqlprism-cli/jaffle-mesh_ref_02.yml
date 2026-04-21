@@ -1,7 +1,7 @@
 task_id: jaffle-mesh_ref_02
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-21T13:53:59.284663+00:00'
+timestamp: '2026-04-21T14:47:07.024920+00:00'
 answer:
   entities:
   - customers
@@ -15,6 +15,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.199
+  wall_time_seconds: 1.111
   tool_breakdown:
     query_references: 1

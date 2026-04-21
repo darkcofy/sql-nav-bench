@@ -1,7 +1,7 @@
 task_id: jaffle-mesh_reindex_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-21T13:54:10.222002+00:00'
+timestamp: '2026-04-21T14:47:31.490808+00:00'
 answer:
   entities:
   - stg_orders
@@ -18,6 +18,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.227
+  wall_time_seconds: 1.079
   tool_breakdown:
     query_references: 1

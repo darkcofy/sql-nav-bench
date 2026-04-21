@@ -1,18 +1,21 @@
 task_id: jaffle-mesh_mesh_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-21T13:54:06.621198+00:00'
+timestamp: '2026-04-21T14:47:21.029945+00:00'
 answer:
-  entities: []
+  entities:
+  - finance
+  - marketing
   explanation: Executed via sqlprism-cli runner
   confidence: high
 metrics:
-  tool_calls: 1
+  tool_calls: 7
   search_calls: 0
   files_opened: 0
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.223
+  wall_time_seconds: 8.441
   tool_breakdown:
-    query_references: 1
+    query_search: 1
+    query_references: 6

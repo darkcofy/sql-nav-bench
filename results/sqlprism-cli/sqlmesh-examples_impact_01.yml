@@ -1,7 +1,7 @@
 task_id: sqlmesh-examples_impact_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-21T13:52:43.861935+00:00'
+timestamp: '2026-04-21T14:46:38.880882+00:00'
 answer:
   entities:
   - customer_revenue_by_day
@@ -24,6 +24,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.117
+  wall_time_seconds: 1.206
   tool_breakdown:
     query_trace: 1

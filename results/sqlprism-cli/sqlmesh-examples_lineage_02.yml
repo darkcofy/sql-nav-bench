@@ -1,7 +1,7 @@
 task_id: sqlmesh-examples_lineage_02
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-21T13:52:48.216213+00:00'
+timestamp: '2026-04-21T14:46:43.600360+00:00'
 answer:
   entities:
   - order_items
@@ -16,7 +16,7 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 2.145
+  wall_time_seconds: 2.346
   tool_breakdown:
     query_lineage: 1
     query_trace: 1
