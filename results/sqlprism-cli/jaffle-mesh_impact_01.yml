@@ -1,16 +1,11 @@
 task_id: jaffle-mesh_impact_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-08T20:18:15.048747+00:00'
+timestamp: '2026-04-21T13:54:00.544847+00:00'
 answer:
   entities:
-  - not_null_stg_orders_order_id
-  - stg_orders
-  - unique_stg_orders_order_id
   - order_items
   - orders
-  - compute_booleans
-  - joined
   explanation: Executed via sqlprism-cli runner
   confidence: high
 metrics:
@@ -20,6 +15,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.43
+  wall_time_seconds: 1.259
   tool_breakdown:
     query_trace: 1

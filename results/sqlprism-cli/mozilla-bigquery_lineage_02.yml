@@ -1,7 +1,7 @@
 task_id: mozilla-bigquery_lineage_02
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-08T20:26:57.328584+00:00'
+timestamp: '2026-04-21T13:55:26.725703+00:00'
 answer:
   entities: []
   explanation: Executed via sqlprism-cli runner
@@ -13,6 +13,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.292
+  wall_time_seconds: 1.073
   tool_breakdown:
     query_trace: 1

@@ -1,10 +1,13 @@
 task_id: sqlmesh-examples_lineage_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-08T20:17:49.617472+00:00'
+timestamp: '2026-04-21T13:52:46.070041+00:00'
 answer:
   entities:
   - waiter_revenue_by_day
+  - items
+  - order_items
+  - orders
   explanation: Executed via sqlprism-cli runner
   confidence: high
 metrics:
@@ -14,6 +17,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.399
+  wall_time_seconds: 1.099
   tool_breakdown:
     query_trace: 1

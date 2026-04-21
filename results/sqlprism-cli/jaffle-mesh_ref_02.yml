@@ -1,15 +1,10 @@
 task_id: jaffle-mesh_ref_02
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-08T20:18:13.617521+00:00'
+timestamp: '2026-04-21T13:53:59.284663+00:00'
 answer:
   entities:
-  - parent
   - customers
-  - stg_customers
-  - unique_stg_customers_customer_id
-  - not_null_stg_customers_customer_id
-  - relationships_orders_0389c224a99a98c0b58aedb753f052f0
   - customers
   explanation: Executed via sqlprism-cli runner
   confidence: high
@@ -20,6 +15,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.339
+  wall_time_seconds: 1.199
   tool_breakdown:
     query_references: 1

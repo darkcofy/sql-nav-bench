@@ -1,12 +1,10 @@
 task_id: mozilla-bigquery_ref_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-08T20:26:48.248427+00:00'
+timestamp: '2026-04-21T13:55:19.219842+00:00'
 answer:
   entities:
   - search_derived.search_clients_daily_v8
-  - profile_group_id
-  - telemetry.clients_daily_v6
   explanation: Executed via sqlprism-cli runner
   confidence: high
 metrics:
@@ -16,6 +14,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.158
+  wall_time_seconds: 1.109
   tool_breakdown:
     query_references: 1

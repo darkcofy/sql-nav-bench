@@ -1,7 +1,7 @@
 task_id: sqlmesh-examples_mesh_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-08T20:17:53.878438+00:00'
+timestamp: '2026-04-21T13:52:50.390392+00:00'
 answer:
   entities: []
   explanation: Executed via sqlprism-cli runner
@@ -13,6 +13,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.476
+  wall_time_seconds: 1.078
   tool_breakdown:
     query_references: 1

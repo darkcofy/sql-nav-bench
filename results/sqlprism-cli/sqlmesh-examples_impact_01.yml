@@ -1,17 +1,20 @@
 task_id: sqlmesh-examples_impact_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-08T20:17:46.876235+00:00'
+timestamp: '2026-04-21T13:52:43.861935+00:00'
 answer:
   entities:
   - customer_revenue_by_day
   - customer_revenue_lifetime
   - customers
-  - incremental_total
   - latest_order
   - waiter_as_customer_by_day
   - waiter_revenue_by_day
   - waiters
+  - active_customers
+  - count_customers_active
+  - count_customers_inactive
+  - top_waiters
   explanation: Executed via sqlprism-cli runner
   confidence: high
 metrics:
@@ -21,6 +24,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.464
+  wall_time_seconds: 1.117
   tool_breakdown:
     query_trace: 1

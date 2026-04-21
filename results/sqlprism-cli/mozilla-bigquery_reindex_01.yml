@@ -1,9 +1,11 @@
 task_id: mozilla-bigquery_reindex_01
 agent: deterministic-sqlprism-cli
 tools: sqlprism-cli
-timestamp: '2026-04-08T20:26:59.817808+00:00'
+timestamp: '2026-04-21T13:55:28.832563+00:00'
 answer:
-  entities: []
+  entities:
+  - crashes_daily_v1
+  - telemetry.crashes_daily
   explanation: Executed via sqlprism-cli runner
   confidence: high
 metrics:
@@ -13,6 +15,6 @@ metrics:
   tokens_input: 0
   tokens_output: 0
   tokens_total: 0
-  wall_time_seconds: 1.248
+  wall_time_seconds: 1.042
   tool_breakdown:
     query_references: 1
