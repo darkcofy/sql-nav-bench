@@ -299,6 +299,15 @@ class SqlprismCLIRunner(Runner):
         info = extract_entities(task)
         model = info.get("model") or ""
         column = info.get("column")
+        question = task.question.lower()
+        # "direct" signals immediate neighbors only, unless the question also
+        # mentions transitive/both (e.g., "directly or transitively").
+        direct_only = (
+            ("direct" in question or "directly" in question)
+            and "transitive" not in question
+            and "both" not in question
+        )
+        max_depth = 1 if direct_only else 5
 
         breakdown: dict[str, int] = {}
 
@@ -306,18 +315,41 @@ class SqlprismCLIRunner(Runner):
             entities = self._query_references(model, breakdown)
         elif task.tool_hint == "check_impact":
             # Impact = who depends on me = inbound refs = upstream in sqlprism's edge model
-            entities = self._query_trace(model, "upstream", breakdown)
+            entities = self._query_trace(model, "upstream", breakdown, max_depth=max_depth)
         elif task.tool_hint == "trace_dependencies":
             # Dependencies = what do I depend on = outbound refs = downstream in sqlprism's edge model
-            entities = self._query_trace(model, "downstream", breakdown)
+            entities = self._query_trace(model, "downstream", breakdown, max_depth=max_depth)
         elif task.tool_hint == "trace_column_lineage":
-            entities = self._query_lineage(model, breakdown, column=column)
+            # "remove/drop column X from Y, what breaks/downstream?" is column impact,
+            # not lineage — who consumes the column, not where it came from.
+            if column and self._is_column_impact_question(question):
+                entities = self._query_column_usage(model, column, breakdown)
+            else:
+                # Union column-specific hops (what produced this column's value)
+                # with the model's structural upstream (join-only models that
+                # gold treats as lineage contributors). Deduplicate.
+                col_entities = self._query_lineage(model, breakdown, column=column)
+                trace_entities = self._query_trace(model, "downstream", breakdown, max_depth=max_depth)
+                entities = list(dict.fromkeys(col_entities + trace_entities))
+                if column:
+                    entities = [e for e in entities if e != column]
         elif task.tool_hint == "reindex":
-            entities = self._query_references(model, breakdown)
+            # Reindex detects file-level change of the modified model itself,
+            # plus its direct consumers as potentially affected.
+            consumers = self._query_references(model, breakdown)
+            entities = [model] + [e for e in consumers if e != model] if model else consumers
         else:
             entities = self._query_references(model, breakdown)
 
         return entities, breakdown
+
+    @staticmethod
+    def _is_column_impact_question(question: str) -> bool:
+        """Detect questions about downstream column impact vs upstream lineage."""
+        q = question.lower()
+        removed = any(w in q for w in ("remove", "drop", "delete"))
+        downstream = any(w in q for w in ("break", "downstream", "affect", "impact", "consume"))
+        return removed and downstream
 
     def _run_sqlprism(self, args: list[str]) -> str:
         """Run a sqlprism command via uv in the sqlprism project directory."""
@@ -455,8 +487,8 @@ class SqlprismCLIRunner(Runner):
         breakdown["query_references"] = breakdown.get("query_references", 0) + 1
         return self._parse_entities(output)
 
-    def _query_trace(self, name: str, direction: str, breakdown: dict[str, int]) -> list[str]:
-        output = self._run_sqlprism(["query", "trace", name, "--direction", direction, "--max-depth", "5"])
+    def _query_trace(self, name: str, direction: str, breakdown: dict[str, int], max_depth: int = 5) -> list[str]:
+        output = self._run_sqlprism(["query", "trace", name, "--direction", direction, "--max-depth", str(max_depth)])
         breakdown["query_trace"] = breakdown.get("query_trace", 0) + 1
         return self._parse_entities(output)
 

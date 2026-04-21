@@ -35,15 +35,30 @@ def extract_entities(task: Task) -> dict[str, str | None]:
     if proj_match:
         result["project"] = proj_match.group(1)
 
-    # Extract column: "column X from/in Y" or "column X in the Y model"
+    def _last_segment(ref: str) -> str:
+        # Strip trailing punctuation (periods, commas) before splitting on schema dots.
+        return ref.rstrip(".,;:!?").split(".")[-1]
+
+    # Extract column: "column X from/in/of/to Y" (handle dotted schema.table)
     col_match = re.search(
-        r"column\s+[`']?(\w+)[`']?\s+(?:from|in|of)\s+[`']?(\w+)[`']?",
+        r"column\s+[`']?(\w+)[`']?\s+(?:from|in|of|to)\s+[`']?([\w.]+)[`']?",
         question,
         re.IGNORECASE,
     )
     if col_match:
         result["column"] = col_match.group(1)
-        result["model"] = col_match.group(2)
+        result["model"] = _last_segment(col_match.group(2))
+        return result
+
+    # Inverse phrasing: "the 'X' column from/in/of Y"
+    col_match_inv = re.search(
+        r"[`']?(\w+)[`']?\s+column\s+(?:from|in|of)\s+[`']?([\w.]+)[`']?",
+        question,
+        re.IGNORECASE,
+    )
+    if col_match_inv:
+        result["column"] = col_match_inv.group(1)
+        result["model"] = _last_segment(col_match_inv.group(2))
         return result
 
     # Also handle "lineage of X in the Y model"

@@ -136,6 +136,71 @@ class TestSqlprismCLIRunner:
         assert runner._extract_source_from_hop(hop) == ""
 
     @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
+    def test_reindex_includes_model_itself(self, mock_run: MagicMock):
+        """Reindex detects the modified file + its consumers, so the model must appear."""
+        mock_run.return_value = MagicMock(
+            returncode=0, stdout="order_items\norders\n", stderr=""
+        )
+        runner = SqlprismCLIRunner()
+        task = _make_task(
+            "reindex",
+            "After adding column 'amount' to stg_orders, what does reindex detect?",
+            "reindex",
+        )
+        entities, _ = runner.run_task(task, Path("/tmp/repo"))
+        assert entities[0] == "stg_orders"
+        assert "order_items" in entities
+        assert "orders" in entities
+
+    @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
+    def test_column_impact_uses_column_usage(self, mock_run: MagicMock):
+        """Removing-column questions route to column-usage, not lineage."""
+        mock_run.return_value = MagicMock(
+            returncode=0,
+            stdout='{"columns": [{"used_by": ["revenue_a", "revenue_b"]}]}',
+            stderr="",
+        )
+        runner = SqlprismCLIRunner()
+        task = _make_task(
+            "trace_column_lineage",
+            "If I remove the 'price' column from sushi.items, which downstream models break?",
+            "impact",
+        )
+        entities, breakdown = runner.run_task(task, Path("/tmp/repo"))
+        assert "query_column_usage" in breakdown
+        assert "query_lineage" not in breakdown
+        assert "revenue_a" in entities
+
+    @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
+    def test_direct_only_uses_max_depth_1(self, mock_run: MagicMock):
+        """Questions mentioning 'direct' should pass --max-depth 1."""
+        mock_run.return_value = MagicMock(returncode=0, stdout="[]", stderr="")
+        runner = SqlprismCLIRunner()
+        task = _make_task(
+            "trace_dependencies",
+            "What are all the direct upstream dependencies of sushi.waiters?",
+            "lineage",
+        )
+        runner.run_task(task, Path("/tmp/repo"))
+        calls = [c.args[0] for c in mock_run.call_args_list if "query" in c.args[0] and "trace" in c.args[0]]
+        assert any("1" in c and c[c.index("--max-depth") + 1] == "1" for c in calls)
+
+    @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
+    def test_column_lineage_strips_column_name(self, mock_run: MagicMock):
+        """The target column name shouldn't leak into the entity set."""
+        lineage_response = '{"chains": [{"hops": [{"table": "customer_id", "expression": ""}, {"table": "stg_customers", "expression": ""}]}]}'
+        mock_run.return_value = MagicMock(returncode=0, stdout=lineage_response, stderr="")
+        runner = SqlprismCLIRunner()
+        task = _make_task(
+            "trace_column_lineage",
+            "Trace the lineage of column customer_id in customers.",
+            "lineage",
+        )
+        entities, _ = runner.run_task(task, Path("/tmp/repo"))
+        assert "customer_id" not in entities
+        assert "stg_customers" in entities
+
+    @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
     def test_tool_breakdown_counts(self, mock_run: MagicMock):
         mock_run.return_value = MagicMock(
             returncode=0, stdout="model_a\n", stderr=""

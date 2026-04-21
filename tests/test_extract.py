@@ -50,3 +50,33 @@ class TestExtractEntities:
         )
         result = extract_entities(task)
         assert result["model"] == "platform"
+
+    def test_add_column_to_model(self):
+        task = _make_task(
+            "After adding a new column 'discount_amount' to stg_orders in the platform project, what should a reindex detect as changed?",
+            "reindex",
+        )
+        result = extract_entities(task)
+        assert result["column"] == "discount_amount"
+        assert result["model"] == "stg_orders"
+
+    def test_column_from_dotted_schema(self):
+        task = _make_task(
+            "If I remove the 'price' column from sushi.items, which downstream models break?",
+            "trace_column_lineage",
+            "impact",
+        )
+        result = extract_entities(task)
+        assert result["column"] == "price"
+        assert result["model"] == "items"
+
+    def test_dotted_name_with_trailing_period(self):
+        """Sentence-ending period must not leak into the captured model name."""
+        task = _make_task(
+            "Trace the lineage of the 'revenue' column in sushi.customer_revenue_by_day.",
+            "trace_column_lineage",
+            "lineage",
+        )
+        result = extract_entities(task)
+        assert result["column"] == "revenue"
+        assert result["model"] == "customer_revenue_by_day"
