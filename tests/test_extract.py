@@ -80,3 +80,14 @@ class TestExtractEntities:
         result = extract_entities(task)
         assert result["column"] == "revenue"
         assert result["model"] == "customer_revenue_by_day"
+
+    def test_dotted_name_beats_snake_fallback(self):
+        """bronze.a should win over the repo_1 snake_case fallback."""
+        task = _make_task(
+            "In the multi/ sub-project, if bronze.a in repo_1 is changed, "
+            "what models across both repos are affected?",
+            "check_impact",
+            "mesh",
+        )
+        result = extract_entities(task)
+        assert result["model"] == "a"

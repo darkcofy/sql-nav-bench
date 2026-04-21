@@ -101,8 +101,10 @@ def extract_entities(task: Task) -> dict[str, str | None]:
                 result["model"] = name
                 break
 
-    # Fallback: first snake_case name (likely a model/table name)
-    if not result["model"]:
+    # Fallback: first snake_case name (likely a model/table name). Skip when
+    # a dotted schema.table ref already provides a stronger signal — e.g. the
+    # question "bronze.a in repo_1" should resolve to `a`, not `repo_1`.
+    if not result["model"] and not dotted_table_names:
         snake_match = re.search(r"\b(\w+(?:_\w+)+)\b", question)
         if snake_match:
             name = snake_match.group(1)

@@ -201,6 +201,24 @@ class TestSqlprismCLIRunner:
         assert "stg_customers" in entities
 
     @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
+    def test_column_usage_usage_schema(self, mock_run: MagicMock):
+        """sqlprism's {usage: [{node_name, node_kind, file}]} schema is parsed;
+        CTE rows resolve to the enclosing file stem."""
+        usage_response = (
+            '{"usage": ['
+            '{"node_name": "order_total", "node_kind": "cte", '
+            ' "file": "memory/sushi/customer_revenue_by_day.sql"},'
+            '{"node_name": "waiter_revenue_by_day", "node_kind": "query", '
+            ' "file": "memory/sushi/waiter_revenue_by_day.sql"}'
+            ']}'
+        )
+        runner = SqlprismCLIRunner()
+        entities = runner._parse_entities(usage_response)
+        assert "customer_revenue_by_day" in entities
+        assert "waiter_revenue_by_day" in entities
+        assert "order_total" not in entities
+
+    @patch("sql_nav_bench.runners.sqlprism_cli.subprocess.run")
     def test_tool_breakdown_counts(self, mock_run: MagicMock):
         mock_run.return_value = MagicMock(
             returncode=0, stdout="model_a\n", stderr=""

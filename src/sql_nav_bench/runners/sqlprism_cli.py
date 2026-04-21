@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import tempfile
 from pathlib import Path
 
 import yaml
 
-from sql_nav_bench.models import Task
+from sql_nav_bench.models import Category, Task
 from sql_nav_bench.runners import Runner
 from sql_nav_bench.runners.extract import extract_entities
 
@@ -311,6 +312,14 @@ class SqlprismCLIRunner(Runner):
 
         breakdown: dict[str, int] = {}
 
+        # Mesh category with tool_hint=find_references = project-level question
+        # (no specific model). mesh+check_impact tasks name a specific model
+        # and fall through to the normal impact handler.
+        if task.category == Category.MESH and task.tool_hint == "find_references":
+            mesh_entities = self._handle_mesh_task(task, breakdown)
+            if mesh_entities is not None:
+                return mesh_entities, breakdown
+
         if task.tool_hint == "find_references":
             entities = self._query_references(model, breakdown)
         elif task.tool_hint == "check_impact":
@@ -341,7 +350,35 @@ class SqlprismCLIRunner(Runner):
         else:
             entities = self._query_references(model, breakdown)
 
+        # mesh tasks that didn't use the project-level handler (e.g. mesh +
+        # check_impact) may still want schema-qualified names if the repo
+        # uses schema sub-directories. Qualify from each entity's defining file.
+        if task.category == Category.MESH and entities:
+            entities = self._qualify_entities_via_lookup(entities, breakdown)
+
         return entities, breakdown
+
+    def _qualify_entities_via_lookup(self, entities: list[str], breakdown: dict[str, int]) -> list[str]:
+        """Qualify each entity as schema.name when its defining file lives under
+        a schema-like directory. Uses `query search` per unique name to find
+        the defining file.
+        """
+        cache: dict[str, str] = {}
+        resolved: list[str] = []
+        for name in entities:
+            if name in cache:
+                resolved.append(cache[name])
+                continue
+            definers = self._defining_nodes_for_name(name, breakdown)
+            qualified = name
+            for d in definers:
+                candidate = self._qualify_for_mesh(name, d.get("file") or "")
+                if candidate != name:
+                    qualified = candidate
+                    break
+            cache[name] = qualified
+            resolved.append(qualified)
+        return resolved
 
     @staticmethod
     def _is_column_impact_question(question: str) -> bool:
@@ -350,6 +387,180 @@ class SqlprismCLIRunner(Runner):
         removed = any(w in q for w in ("remove", "drop", "delete"))
         downstream = any(w in q for w in ("break", "downstream", "affect", "impact", "consume"))
         return removed and downstream
+
+    def _get_indexed_repos(self) -> list[str]:
+        """List non-empty repo names from `sqlprism status`."""
+        output = self._run_sqlprism(["status"])
+        try:
+            data = json.loads(output)
+        except json.JSONDecodeError:
+            return []
+        return [
+            r["name"] for r in data.get("repos", [])
+            if isinstance(r, dict) and r.get("name") and r.get("file_count", 0) > 0
+        ]
+
+    @staticmethod
+    def _parse_mesh_projects(question: str, repos: list[str]) -> tuple[str | None, str | None]:
+        """Determine (source, target) project names from a mesh question.
+
+        Returns the first two repo names mentioned in the question, ordered by
+        position. Single-repo questions (e.g. "what consumes from platform")
+        return (source, None). Ignores repos appearing inside parenthetical
+        "(not just from X)" clauses, which are negation hints.
+        """
+        q = question.lower()
+        # Drop parenthetical negation clauses from matching
+        q_clean = re.sub(r"\((?:not\s+just|excluding|except)[^)]*\)", "", q, flags=re.IGNORECASE)
+        positions: list[tuple[int, str]] = []
+        for repo in repos:
+            idx = q_clean.find(repo.lower())
+            if idx >= 0:
+                positions.append((idx, repo))
+        positions.sort()
+        if not positions:
+            return None, None
+        if len(positions) == 1:
+            return positions[0][1], None
+        return positions[0][1], positions[1][1]
+
+    def _list_repo_models(self, repo: str, breakdown: dict[str, int]) -> list[dict]:
+        """Enumerate actual model-like nodes in a repo, deduplicated by name.
+
+        sqlprism indexes dbt ref() targets as table nodes inside the referring
+        repo (e.g. `orders` shows up in `marketing` because marketing refs it).
+        Filter those out by requiring that the node name matches its file stem,
+        which is true only for the model that *defines* that name.
+        """
+        output = self._run_sqlprism(["query", "search", "", "--repo", repo, "--limit", "500"])
+        breakdown["query_search"] = breakdown.get("query_search", 0) + 1
+        try:
+            data = json.loads(output)
+        except json.JSONDecodeError:
+            return []
+        seen: set[str] = set()
+        models: list[dict] = []
+        for m in data.get("matches", []):
+            if not isinstance(m, dict):
+                continue
+            name = m.get("name")
+            if not name or m.get("kind") == "cte":
+                continue
+            file = m.get("file", "") or ""
+            if ".yml/" in file:
+                continue
+            if file and Path(file).stem != name:
+                continue
+            if name in seen:
+                continue
+            seen.add(name)
+            models.append({"name": name, "file": file})
+        return models
+
+    def _query_references_edges(self, name: str, direction: str, breakdown: dict[str, int], repo: str | None = None) -> list[dict]:
+        """Return raw reference edges with {name, repo, file, ...} fields."""
+        args = ["query", "references", name, "--direction", direction]
+        if repo:
+            args.extend(["--repo", repo])
+        output = self._run_sqlprism(args)
+        breakdown["query_references"] = breakdown.get("query_references", 0) + 1
+        try:
+            data = json.loads(output)
+        except json.JSONDecodeError:
+            return []
+        key = "inbound" if direction == "inbound" else "outbound"
+        return [r for r in data.get(key, []) if isinstance(r, dict)]
+
+    def _defining_nodes_for_name(self, name: str, breakdown: dict[str, int]) -> list[dict]:
+        """Return all repos where `name` is defined (file stem matches).
+
+        A model name can be defined in multiple repos (different projects with
+        colliding names); return every match so callers can decide which one
+        is relevant.
+        """
+        output = self._run_sqlprism(["query", "search", name, "--limit", "20"])
+        breakdown["query_search"] = breakdown.get("query_search", 0) + 1
+        try:
+            data = json.loads(output)
+        except json.JSONDecodeError:
+            return []
+        definers: list[dict] = []
+        for m in data.get("matches", []):
+            if not isinstance(m, dict):
+                continue
+            if m.get("name") != name or m.get("kind") == "cte":
+                continue
+            file = m.get("file") or ""
+            if ".yml/" in file:
+                continue
+            if file and Path(file).stem == name:
+                definers.append({"repo": m.get("repo"), "file": file})
+        return definers
+
+    @staticmethod
+    def _qualify_for_mesh(name: str, file_path: str) -> str:
+        """Qualify a model as schema.name when the parent dir looks like a schema.
+
+        dbt layer dirs (models/staging/marts/...) are skipped; sqlmesh schema
+        dirs (bronze/silver/sushi/...) become the qualifier.
+        """
+        if not file_path:
+            return name
+        parent = Path(file_path).parent.name
+        skip = {"models", "staging", "marts", "sources", "snapshots", "analyses", "macros", "seeds"}
+        if parent and parent.lower() not in skip:
+            return f"{parent}.{name}"
+        return name
+
+    def _handle_mesh_task(self, task: Task, breakdown: dict[str, int]) -> list[str] | None:
+        """Cross-project/cross-repo query handler. Returns None to fall through
+        to the default handler when the question doesn't parse as a mesh query.
+        """
+        repos = self._get_indexed_repos()
+        if not repos:
+            return None
+        source, target = self._parse_mesh_projects(task.question, repos)
+        if not source:
+            return None
+        models = self._list_repo_models(source, breakdown)
+        # Cache defining-node lookups across all refs to cut query_search calls.
+        define_cache: dict[str, list[dict]] = {}
+
+        def define_repos(ref_name: str) -> set[str]:
+            if ref_name not in define_cache:
+                define_cache[ref_name] = self._defining_nodes_for_name(ref_name, breakdown)
+            return {n["repo"] for n in define_cache[ref_name] if n.get("repo")}
+
+        if target is None:
+            # "which projects consume models from <source>?" → consumer repos.
+            # Inbound edges' `repo` field points to the source-side node, so
+            # we resolve the consumer's defining repo from the edge's name.
+            consumers: set[str] = set()
+            for m in models:
+                for ref in self._query_references_edges(m["name"], "inbound", breakdown, repo=source):
+                    consumer_repo = ref.get("repo")
+                    if consumer_repo and consumer_repo != source:
+                        consumers.add(consumer_repo)
+                        continue
+                    for origin in define_repos(ref.get("name", "")):
+                        if origin != source:
+                            consumers.add(origin)
+            return sorted(consumers)
+
+        # "which models in <source> depend on models from <target>?"
+        qualify = any(
+            Path(m["file"]).parent.name.lower() not in {
+                "", "models", "staging", "marts", "sources", "snapshots",
+            }
+            for m in models if m["file"]
+        )
+        results: list[str] = []
+        for m in models:
+            edges = self._query_references_edges(m["name"], "outbound", breakdown, repo=source)
+            target_names = {e["name"] for e in edges if e.get("name")}
+            if any(target in define_repos(tname) for tname in target_names):
+                results.append(self._qualify_for_mesh(m["name"], m["file"]) if qualify else m["name"])
+        return results
 
     def _run_sqlprism(self, args: list[str]) -> str:
         """Run a sqlprism command via uv in the sqlprism project directory."""
@@ -423,6 +634,22 @@ class SqlprismCLIRunner(Runner):
                                 entities.append(ref)
                             elif isinstance(ref, dict):
                                 entities.append(ref.get("name", ""))
+            # column-usage sqlprism schema: {"usage": [{node_name, node_kind, file, ...}]}
+            # CTE rows resolve to the enclosing file's stem, since CTEs aren't
+            # standalone models for bench scoring.
+            if "usage" in data and isinstance(data["usage"], list):
+                for row in data["usage"]:
+                    if not isinstance(row, dict):
+                        continue
+                    kind = row.get("node_kind")
+                    if kind == "cte":
+                        file_path = row.get("file") or ""
+                        if file_path:
+                            entities.append(Path(file_path).stem)
+                    else:
+                        name = row.get("node_name")
+                        if name:
+                            entities.append(name)
         elif isinstance(data, list):
             for item in data:
                 if isinstance(item, str):
